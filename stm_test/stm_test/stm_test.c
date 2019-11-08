@@ -5,25 +5,26 @@
  */ 
 
 
+#define F_CPU 16000000UL
 #include <avr/io.h>	
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
-
-#define F_CPU = 16000000UL
 
 
 int main(void)
 {	
 	DDRD |= 0xFF;
-	DDRB |= 0x00;
 	
-	TCCR1A |= 0<<WGM10 | 1<<WGM11  | 1<<COM1A1 | 1<<COM1B1  ;
-	TCCR1B |= 1<<WGM12 | 1<<WGM13 | 1<<CS10 ;
-	ICR1 = 19999;
+	TCCR1A |=   (1<<WGM11) | (1<<WGM12) | (1<<WGM13) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
+	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
+	ICR1 = 19999 ;
 	
-	unsigned int NEUTRAL = ICR1 - 190;
-	unsigned int FULL_REVERSE = ICR1 - 125;
-	unsigned int FULL_FORWARD = ICR1 - 250;
+	
+		
+	unsigned int NEUTRAL = ICR1 -1400; // 1.43ms
+	unsigned int LEFT = ICR1 - 1210;
+	unsigned int RIGHT= ICR1 -1650;
 	
 	EICRA |= 1<<ISC20 | 1<<ISC21;
 	EIMSK |= 1<<INT2;
@@ -31,14 +32,23 @@ int main(void)
 	sei();               // Enable global interrupts
 	
 	OCR1A = NEUTRAL;
-	//OCR1B = NEUTRAL;
+	OCR1B = NEUTRAL;
 	
     while(1)
     {
+			OCR1A = NEUTRAL;
+			OCR1B = NEUTRAL;
+		_delay_ms(3000);
+				OCR1B = LEFT;
+		_delay_ms(500);
+						OCR1B = RIGHT;
+		_delay_ms(100);
+                
+		
     }
 }
 
 ISR(INT2_vect)
 {
-	OCR1A -= 1;
+	OCR1A -=10;
 }
