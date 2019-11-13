@@ -3,25 +3,23 @@ stm_ctm_impli.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000013e  00000000  00000000  00000054  2**1
+  0 .text         000000c2  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .comment      00000030  00000000  00000000  00000192  2**0
+  1 .comment      00000030  00000000  00000000  00000116  2**0
                   CONTENTS, READONLY
-  2 .debug_aranges 00000028  00000000  00000000  000001c2  2**0
+  2 .debug_aranges 00000030  00000000  00000000  00000146  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_info   00000117  00000000  00000000  000001ea  2**0
+  3 .debug_info   000000ec  00000000  00000000  00000176  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_abbrev 000000d2  00000000  00000000  00000301  2**0
+  4 .debug_abbrev 000000aa  00000000  00000000  00000262  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   0000011e  00000000  00000000  000003d3  2**0
+  5 .debug_line   00000115  00000000  00000000  0000030c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_frame  00000058  00000000  00000000  000004f4  2**2
+  6 .debug_frame  00000044  00000000  00000000  00000424  2**2
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_str    00000199  00000000  00000000  0000054c  2**0
+  7 .debug_str    00000166  00000000  00000000  00000468  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_loc    00000088  00000000  00000000  000006e5  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  9 .debug_ranges 00000018  00000000  00000000  0000076d  2**0
+  8 .debug_ranges 00000020  00000000  00000000  000005ce  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -65,7 +63,7 @@ Disassembly of section .text:
   46:	00 00       	nop
   48:	29 c0       	rjmp	.+82     	; 0x9c <__bad_interrupt>
   4a:	00 00       	nop
-  4c:	55 c0       	rjmp	.+170    	; 0xf8 <__vector_19>
+  4c:	27 c0       	rjmp	.+78     	; 0x9c <__bad_interrupt>
   4e:	00 00       	nop
   50:	25 c0       	rjmp	.+74     	; 0x9c <__bad_interrupt>
   52:	00 00       	nop
@@ -105,131 +103,65 @@ Disassembly of section .text:
   92:	d0 e4       	ldi	r29, 0x40	; 64
   94:	de bf       	out	0x3e, r29	; 62
   96:	cd bf       	out	0x3d, r28	; 61
-  98:	02 d0       	rcall	.+4      	; 0x9e <main>
-  9a:	4f c0       	rjmp	.+158    	; 0x13a <_exit>
+  98:	0c d0       	rcall	.+24     	; 0xb2 <main>
+  9a:	11 c0       	rjmp	.+34     	; 0xbe <_exit>
 
 0000009c <__bad_interrupt>:
   9c:	b1 cf       	rjmp	.-158    	; 0x0 <__vectors>
 
-0000009e <main>:
-#include <util/delay.h>
+0000009e <SPI_SlaveInit>:
+	
+	
+void SPI_SlaveInit(void)
+{
+
+DDRB = 0b00000010;
+  9e:	82 e0       	ldi	r24, 0x02	; 2
+  a0:	84 b9       	out	0x04, r24	; 4
+
+SPCR = (1<<SPE);
+  a2:	80 e4       	ldi	r24, 0x40	; 64
+  a4:	8c bd       	out	0x2c, r24	; 44
+  a6:	08 95       	ret
+
+000000a8 <SPI_SlaveReceive>:
+}
+
+char SPI_SlaveReceive(void)
+{
+
+while(!(SPSR & (1<<SPIF)))
+  a8:	0d b4       	in	r0, 0x2d	; 45
+  aa:	07 fe       	sbrs	r0, 7
+  ac:	fd cf       	rjmp	.-6      	; 0xa8 <SPI_SlaveReceive>
+;return SPDR;
+  ae:	8e b5       	in	r24, 0x2e	; 46
+
+}
+  b0:	08 95       	ret
+
+000000b2 <main>:
+
 
 
 int main(void)
 {
-	DDRD |= 0xFF; // Make all the PD pins as output.
-  9e:	8a b1       	in	r24, 0x0a	; 10
-  a0:	8f ef       	ldi	r24, 0xFF	; 255
-  a2:	8a b9       	out	0x0a, r24	; 10
-		
-    //PWM fas mode configuration. 
-	TCCR1A |=   (1<<WGM11) | (1<<WGM12) | (1<<WGM13) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
-  a4:	e0 e8       	ldi	r30, 0x80	; 128
-  a6:	f0 e0       	ldi	r31, 0x00	; 0
-  a8:	80 81       	ld	r24, Z
-  aa:	8a 6f       	ori	r24, 0xFA	; 250
-  ac:	80 83       	st	Z, r24
-	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
-  ae:	e1 e8       	ldi	r30, 0x81	; 129
-  b0:	f0 e0       	ldi	r31, 0x00	; 0
-  b2:	80 81       	ld	r24, Z
-  b4:	8a 61       	ori	r24, 0x1A	; 26
-  b6:	80 83       	st	Z, r24
-	ICR1 = 19999 ;
-  b8:	e6 e8       	ldi	r30, 0x86	; 134
-  ba:	f0 e0       	ldi	r31, 0x00	; 0
-  bc:	8f e1       	ldi	r24, 0x1F	; 31
-  be:	9e e4       	ldi	r25, 0x4E	; 78
-  c0:	91 83       	std	Z+1, r25	; 0x01
-  c2:	80 83       	st	Z, r24
+	SPI_SlaveInit();
+  b2:	f5 df       	rcall	.-22     	; 0x9e <SPI_SlaveInit>
+	// main loop
+	DDRA = 0b11111111;
+  b4:	8f ef       	ldi	r24, 0xFF	; 255
+  b6:	81 b9       	out	0x01, r24	; 1
+	while(1)
+	{
+		unsigned char temp = SPI_SlaveReceive();
+  b8:	f7 df       	rcall	.-18     	; 0xa8 <SPI_SlaveReceive>
+        PORTA = temp;
+  ba:	82 b9       	out	0x02, r24	; 2
+  bc:	fd cf       	rjmp	.-6      	; 0xb8 <main+0x6>
 
-	//Speed and directions constants.  
-	unsigned int NEUTRAL = ICR1 -1400; // 1.43ms
-  c4:	80 81       	ld	r24, Z
-  c6:	91 81       	ldd	r25, Z+1	; 0x01
-  c8:	88 57       	subi	r24, 0x78	; 120
-  ca:	95 40       	sbci	r25, 0x05	; 5
-	unsigned int LEFT = ICR1 - 1210;
-  cc:	20 81       	ld	r18, Z
-  ce:	31 81       	ldd	r19, Z+1	; 0x01
-	unsigned int RIGHT= ICR1 -1650;
-  d0:	20 81       	ld	r18, Z
-  d2:	31 81       	ldd	r19, Z+1	; 0x01
-	
-	// speed variable. 
-	OCR1A = NEUTRAL;
-  d4:	90 93 89 00 	sts	0x0089, r25
-  d8:	80 93 88 00 	sts	0x0088, r24
-	// directions variable. 
-	OCR1B = NEUTRAL;
-  dc:	90 93 8b 00 	sts	0x008B, r25
-  e0:	80 93 8a 00 	sts	0x008A, r24
-	}
+000000be <_exit>:
+  be:	f8 94       	cli
 
-    
-
-
-	sei(); //  enable global interrupt.
-  e4:	78 94       	sei
-	OCR1A = NEUTRAL;// speed inti.
-  e6:	90 93 89 00 	sts	0x0089, r25
-  ea:	80 93 88 00 	sts	0x0088, r24
-	OCR1B = NEUTRAL;// speed inti.
-  ee:	90 93 8b 00 	sts	0x008B, r25
-  f2:	80 93 8a 00 	sts	0x008A, r24
-  f6:	ff cf       	rjmp	.-2      	; 0xf6 <main+0x58>
-
-000000f8 <__vector_19>:
-	return 0;
-}
-
-
-//.
- ISR(SPI_STC_vect){
-  f8:	1f 92       	push	r1
-  fa:	0f 92       	push	r0
-  fc:	0f b6       	in	r0, 0x3f	; 63
-  fe:	0f 92       	push	r0
- 100:	11 24       	eor	r1, r1
- 102:	0b b6       	in	r0, 0x3b	; 59
- 104:	0f 92       	push	r0
- 106:	2f 93       	push	r18
- 108:	8f 93       	push	r24
- 10a:	9f 93       	push	r25
- 10c:	ef 93       	push	r30
- 10e:	ff 93       	push	r31
-
-		// ode to execute
-		// whenever transmission/reception 
-		// is complete 
-		unsigned int b = SPDR;
- 110:	2e b5       	in	r18, 0x2e	; 46
-		OCR1A += b;
- 112:	e8 e8       	ldi	r30, 0x88	; 136
- 114:	f0 e0       	ldi	r31, 0x00	; 0
- 116:	80 81       	ld	r24, Z
- 118:	91 81       	ldd	r25, Z+1	; 0x01
- 11a:	82 0f       	add	r24, r18
- 11c:	91 1d       	adc	r25, r1
- 11e:	91 83       	std	Z+1, r25	; 0x01
- 120:	80 83       	st	Z, r24
-
-}
- 122:	ff 91       	pop	r31
- 124:	ef 91       	pop	r30
- 126:	9f 91       	pop	r25
- 128:	8f 91       	pop	r24
- 12a:	2f 91       	pop	r18
- 12c:	0f 90       	pop	r0
- 12e:	0b be       	out	0x3b, r0	; 59
- 130:	0f 90       	pop	r0
- 132:	0f be       	out	0x3f, r0	; 63
- 134:	0f 90       	pop	r0
- 136:	1f 90       	pop	r1
- 138:	18 95       	reti
-
-0000013a <_exit>:
- 13a:	f8 94       	cli
-
-0000013c <__stop_program>:
- 13c:	ff cf       	rjmp	.-2      	; 0x13c <__stop_program>
+000000c0 <__stop_program>:
+  c0:	ff cf       	rjmp	.-2      	; 0xc0 <__stop_program>
