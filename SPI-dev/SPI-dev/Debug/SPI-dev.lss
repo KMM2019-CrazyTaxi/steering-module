@@ -1,0 +1,307 @@
+
+SPI-dev.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000002  00800100  00000160  000001f4  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         00000160  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          00000001  00800102  00800102  000001f6  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  000001f6  2**0
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000068  00000000  00000000  00000226  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000004a6  00000000  00000000  0000028e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000021c  00000000  00000000  00000734  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000034b  00000000  00000000  00000950  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  000000dc  00000000  00000000  00000c9c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000021b  00000000  00000000  00000d78  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000035e  00000000  00000000  00000f93  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000058  00000000  00000000  000012f1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	45 c0       	rjmp	.+138    	; 0x8c <__ctors_end>
+   2:	00 00       	nop
+   4:	60 c0       	rjmp	.+192    	; 0xc6 <__bad_interrupt>
+   6:	00 00       	nop
+   8:	5e c0       	rjmp	.+188    	; 0xc6 <__bad_interrupt>
+   a:	00 00       	nop
+   c:	5c c0       	rjmp	.+184    	; 0xc6 <__bad_interrupt>
+   e:	00 00       	nop
+  10:	5a c0       	rjmp	.+180    	; 0xc6 <__bad_interrupt>
+  12:	00 00       	nop
+  14:	58 c0       	rjmp	.+176    	; 0xc6 <__bad_interrupt>
+  16:	00 00       	nop
+  18:	56 c0       	rjmp	.+172    	; 0xc6 <__bad_interrupt>
+  1a:	00 00       	nop
+  1c:	54 c0       	rjmp	.+168    	; 0xc6 <__bad_interrupt>
+  1e:	00 00       	nop
+  20:	52 c0       	rjmp	.+164    	; 0xc6 <__bad_interrupt>
+  22:	00 00       	nop
+  24:	50 c0       	rjmp	.+160    	; 0xc6 <__bad_interrupt>
+  26:	00 00       	nop
+  28:	4e c0       	rjmp	.+156    	; 0xc6 <__bad_interrupt>
+  2a:	00 00       	nop
+  2c:	4c c0       	rjmp	.+152    	; 0xc6 <__bad_interrupt>
+  2e:	00 00       	nop
+  30:	4a c0       	rjmp	.+148    	; 0xc6 <__bad_interrupt>
+  32:	00 00       	nop
+  34:	48 c0       	rjmp	.+144    	; 0xc6 <__bad_interrupt>
+  36:	00 00       	nop
+  38:	46 c0       	rjmp	.+140    	; 0xc6 <__bad_interrupt>
+  3a:	00 00       	nop
+  3c:	44 c0       	rjmp	.+136    	; 0xc6 <__bad_interrupt>
+  3e:	00 00       	nop
+  40:	42 c0       	rjmp	.+132    	; 0xc6 <__bad_interrupt>
+  42:	00 00       	nop
+  44:	40 c0       	rjmp	.+128    	; 0xc6 <__bad_interrupt>
+  46:	00 00       	nop
+  48:	3e c0       	rjmp	.+124    	; 0xc6 <__bad_interrupt>
+  4a:	00 00       	nop
+  4c:	3c c0       	rjmp	.+120    	; 0xc6 <__bad_interrupt>
+  4e:	00 00       	nop
+  50:	3a c0       	rjmp	.+116    	; 0xc6 <__bad_interrupt>
+  52:	00 00       	nop
+  54:	38 c0       	rjmp	.+112    	; 0xc6 <__bad_interrupt>
+  56:	00 00       	nop
+  58:	36 c0       	rjmp	.+108    	; 0xc6 <__bad_interrupt>
+  5a:	00 00       	nop
+  5c:	34 c0       	rjmp	.+104    	; 0xc6 <__bad_interrupt>
+  5e:	00 00       	nop
+  60:	32 c0       	rjmp	.+100    	; 0xc6 <__bad_interrupt>
+  62:	00 00       	nop
+  64:	30 c0       	rjmp	.+96     	; 0xc6 <__bad_interrupt>
+  66:	00 00       	nop
+  68:	2e c0       	rjmp	.+92     	; 0xc6 <__bad_interrupt>
+  6a:	00 00       	nop
+  6c:	2c c0       	rjmp	.+88     	; 0xc6 <__bad_interrupt>
+  6e:	00 00       	nop
+  70:	2a c0       	rjmp	.+84     	; 0xc6 <__bad_interrupt>
+  72:	00 00       	nop
+  74:	28 c0       	rjmp	.+80     	; 0xc6 <__bad_interrupt>
+  76:	00 00       	nop
+  78:	26 c0       	rjmp	.+76     	; 0xc6 <__bad_interrupt>
+  7a:	00 00       	nop
+  7c:	24 c0       	rjmp	.+72     	; 0xc6 <__bad_interrupt>
+  7e:	00 00       	nop
+  80:	22 c0       	rjmp	.+68     	; 0xc6 <__bad_interrupt>
+  82:	00 00       	nop
+  84:	20 c0       	rjmp	.+64     	; 0xc6 <__bad_interrupt>
+  86:	00 00       	nop
+  88:	1e c0       	rjmp	.+60     	; 0xc6 <__bad_interrupt>
+	...
+
+0000008c <__ctors_end>:
+  8c:	11 24       	eor	r1, r1
+  8e:	1f be       	out	0x3f, r1	; 63
+  90:	cf ef       	ldi	r28, 0xFF	; 255
+  92:	d0 e4       	ldi	r29, 0x40	; 64
+  94:	de bf       	out	0x3e, r29	; 62
+  96:	cd bf       	out	0x3d, r28	; 61
+
+00000098 <__do_copy_data>:
+  98:	11 e0       	ldi	r17, 0x01	; 1
+  9a:	a0 e0       	ldi	r26, 0x00	; 0
+  9c:	b1 e0       	ldi	r27, 0x01	; 1
+  9e:	e0 e6       	ldi	r30, 0x60	; 96
+  a0:	f1 e0       	ldi	r31, 0x01	; 1
+  a2:	00 e0       	ldi	r16, 0x00	; 0
+  a4:	0b bf       	out	0x3b, r16	; 59
+  a6:	02 c0       	rjmp	.+4      	; 0xac <__do_copy_data+0x14>
+  a8:	07 90       	elpm	r0, Z+
+  aa:	0d 92       	st	X+, r0
+  ac:	a2 30       	cpi	r26, 0x02	; 2
+  ae:	b1 07       	cpc	r27, r17
+  b0:	d9 f7       	brne	.-10     	; 0xa8 <__do_copy_data+0x10>
+
+000000b2 <__do_clear_bss>:
+  b2:	21 e0       	ldi	r18, 0x01	; 1
+  b4:	a2 e0       	ldi	r26, 0x02	; 2
+  b6:	b1 e0       	ldi	r27, 0x01	; 1
+  b8:	01 c0       	rjmp	.+2      	; 0xbc <.do_clear_bss_start>
+
+000000ba <.do_clear_bss_loop>:
+  ba:	1d 92       	st	X+, r1
+
+000000bc <.do_clear_bss_start>:
+  bc:	a3 30       	cpi	r26, 0x03	; 3
+  be:	b2 07       	cpc	r27, r18
+  c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
+  c2:	2b d0       	rcall	.+86     	; 0x11a <main>
+  c4:	4b c0       	rjmp	.+150    	; 0x15c <_exit>
+
+000000c6 <__bad_interrupt>:
+  c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
+
+000000c8 <SPI_SlaveInit>:
+
+	}
+}
+
+void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
+	for (uint8_t i = 0; i < size; i++) {
+  c8:	80 e4       	ldi	r24, 0x40	; 64
+  ca:	84 b9       	out	0x04, r24	; 4
+  cc:	8c bd       	out	0x2c, r24	; 44
+  ce:	08 95       	ret
+
+000000d0 <SPI_tranceive>:
+  d0:	8e bd       	out	0x2e, r24	; 46
+  d2:	0d b4       	in	r0, 0x2d	; 45
+  d4:	07 fe       	sbrs	r0, 7
+  d6:	fd cf       	rjmp	.-6      	; 0xd2 <SPI_tranceive+0x2>
+  d8:	8e b5       	in	r24, 0x2e	; 46
+  da:	08 95       	ret
+
+000000dc <SPI_communicate>:
+/*
+ * Perform communication with the central module in accordance to the protocol. 
+ * Returns 1 if the communication was successful or 0 if it failed.
+ * Ideally we want as few function calls as possible in this method.
+ */
+uint8_t SPI_communicate(void) {
+  dc:	cf 93       	push	r28
+	uint8_t start_cm, restart_cm;
+	uint8_t status = NAN;
+	/* Read START byte */
+	start_cm = SPI_tranceive(status);
+  de:	80 e0       	ldi	r24, 0x00	; 0
+  e0:	f7 df       	rcall	.-18     	; 0xd0 <SPI_tranceive>
+	
+	if (start_cm != SPI_START) {
+  e2:	8a 3a       	cpi	r24, 0xAA	; 170
+  e4:	11 f4       	brne	.+4      	; 0xea <SPI_communicate+0xe>
+ * Returns 1 if the communication was successful or 0 if it failed.
+ * Ideally we want as few function calls as possible in this method.
+ */
+uint8_t SPI_communicate(void) {
+	uint8_t start_cm, restart_cm;
+	uint8_t status = NAN;
+  e6:	c0 e0       	ldi	r28, 0x00	; 0
+  e8:	01 c0       	rjmp	.+2      	; 0xec <SPI_communicate+0x10>
+	/* Read START byte */
+	start_cm = SPI_tranceive(status);
+	
+	if (start_cm != SPI_START) {
+		status = SPI_ERROR;
+  ea:	c5 e5       	ldi	r28, 0x55	; 85
+	}
+	/* Read Speed byte */
+	speed_cm = SPI_tranceive(status);
+  ec:	8c 2f       	mov	r24, r28
+  ee:	f0 df       	rcall	.-32     	; 0xd0 <SPI_tranceive>
+  f0:	80 93 02 01 	sts	0x0102, r24
+	
+	/* Read Angle byte */
+	angle_cm = SPI_tranceive(status);
+  f4:	8c 2f       	mov	r24, r28
+  f6:	ec df       	rcall	.-40     	; 0xd0 <SPI_tranceive>
+  f8:	80 93 01 01 	sts	0x0101, r24
+
+	/* Send CHECK byte */
+	check_byte = speed_cm ^ angle_cm;
+  fc:	90 91 02 01 	lds	r25, 0x0102
+ 100:	89 27       	eor	r24, r25
+ 102:	80 93 00 01 	sts	0x0100, r24
+	SPI_tranceive(check_byte);
+ 106:	e4 df       	rcall	.-56     	; 0xd0 <SPI_tranceive>
+	
+	/* Read RESTART byte */
+	restart_cm = SPI_tranceive(NAN);
+ 108:	80 e0       	ldi	r24, 0x00	; 0
+ 10a:	e2 df       	rcall	.-60     	; 0xd0 <SPI_tranceive>
+	
+	if (restart_cm == SPI_FINISHED) {
+ 10c:	91 e0       	ldi	r25, 0x01	; 1
+ 10e:	86 36       	cpi	r24, 0x66	; 102
+ 110:	09 f0       	breq	.+2      	; 0x114 <SPI_communicate+0x38>
+ 112:	90 e0       	ldi	r25, 0x00	; 0
+		return 1;
+	} else {
+		return 0;
+	}
+}
+ 114:	89 2f       	mov	r24, r25
+ 116:	cf 91       	pop	r28
+ 118:	08 95       	ret
+
+0000011a <main>:
+
+int main(void) {
+
+
+	SPI_SlaveInit();
+ 11a:	d6 df       	rcall	.-84     	; 0xc8 <SPI_SlaveInit>
+
+	return check;
+}
+
+void init(void) {
+	DDRA = 0xFF;
+ 11c:	8f ef       	ldi	r24, 0xFF	; 255
+ 11e:	81 b9       	out	0x01, r24	; 1
+
+
+	SPI_SlaveInit();
+	init();
+
+	PORTA = 0xFF; 	
+ 120:	82 b9       	out	0x02, r24	; 2
+
+	while(1) {
+		SPI_communicate();
+ 122:	dc df       	rcall	.-72     	; 0xdc <SPI_communicate>
+	
+		PORTA = speed_cm;
+ 124:	80 91 02 01 	lds	r24, 0x0102
+ 128:	82 b9       	out	0x02, r24	; 2
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 12a:	87 ea       	ldi	r24, 0xA7	; 167
+ 12c:	91 e6       	ldi	r25, 0x61	; 97
+ 12e:	01 97       	sbiw	r24, 0x01	; 1
+ 130:	f1 f7       	brne	.-4      	; 0x12e <main+0x14>
+ 132:	00 c0       	rjmp	.+0      	; 0x134 <main+0x1a>
+ 134:	00 00       	nop
+		_delay_ms(100);
+		PORTA = angle_cm;
+ 136:	80 91 01 01 	lds	r24, 0x0101
+ 13a:	82 b9       	out	0x02, r24	; 2
+ 13c:	87 ea       	ldi	r24, 0xA7	; 167
+ 13e:	91 e6       	ldi	r25, 0x61	; 97
+ 140:	01 97       	sbiw	r24, 0x01	; 1
+ 142:	f1 f7       	brne	.-4      	; 0x140 <main+0x26>
+ 144:	00 c0       	rjmp	.+0      	; 0x146 <main+0x2c>
+ 146:	00 00       	nop
+		_delay_ms(100);
+		PORTA = check_byte;
+ 148:	80 91 00 01 	lds	r24, 0x0100
+ 14c:	82 b9       	out	0x02, r24	; 2
+ 14e:	87 ea       	ldi	r24, 0xA7	; 167
+ 150:	91 e6       	ldi	r25, 0x61	; 97
+ 152:	01 97       	sbiw	r24, 0x01	; 1
+ 154:	f1 f7       	brne	.-4      	; 0x152 <main+0x38>
+ 156:	00 c0       	rjmp	.+0      	; 0x158 <main+0x3e>
+ 158:	00 00       	nop
+ 15a:	e3 cf       	rjmp	.-58     	; 0x122 <main+0x8>
+
+0000015c <_exit>:
+ 15c:	f8 94       	cli
+
+0000015e <__stop_program>:
+ 15e:	ff cf       	rjmp	.-2      	; 0x15e <__stop_program>
