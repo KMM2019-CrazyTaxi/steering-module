@@ -3,29 +3,29 @@ SPI-dev.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  00000272  00000306  2**0
+  0 .data         00000002  00800100  00000260  000002f4  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000272  00000000  00000000  00000094  2**1
+  1 .text         00000260  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000001  00800102  00800102  00000308  2**0
+  2 .bss          00000001  00800102  00800102  000002f6  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000308  2**0
+  3 .comment      00000030  00000000  00000000  000002f6  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000070  00000000  00000000  00000338  2**0
+  4 .debug_aranges 00000070  00000000  00000000  00000326  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000048e  00000000  00000000  000003a8  2**0
+  5 .debug_info   000004fe  00000000  00000000  00000396  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000206  00000000  00000000  00000836  2**0
+  6 .debug_abbrev 00000225  00000000  00000000  00000894  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000408  00000000  00000000  00000a3c  2**0
+  7 .debug_line   00000402  00000000  00000000  00000ab9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000000f4  00000000  00000000  00000e44  2**2
+  8 .debug_frame  000000f4  00000000  00000000  00000ebc  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000283  00000000  00000000  00000f38  2**0
+  9 .debug_str    00000298  00000000  00000000  00000fb0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000041d  00000000  00000000  000011bb  2**0
+ 10 .debug_loc    000003a9  00000000  00000000  00001248  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000060  00000000  00000000  000015d8  2**0
+ 11 .debug_ranges 00000090  00000000  00000000  000015f1  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -114,7 +114,7 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	e2 e7       	ldi	r30, 0x72	; 114
+  9e:	e0 e6       	ldi	r30, 0x60	; 96
   a0:	f2 e0       	ldi	r31, 0x02	; 2
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
@@ -139,7 +139,7 @@ Disassembly of section .text:
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
   c2:	31 d0       	rcall	.+98     	; 0x126 <main>
-  c4:	d4 c0       	rjmp	.+424    	; 0x26e <_exit>
+  c4:	cb c0       	rjmp	.+406    	; 0x25c <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
@@ -196,6 +196,8 @@ void read_data_send_check(void) {
 
 000000fe <PWM_init>:
 }
+
+
 
 void PWM_init() {
 	DDRD |= 0xFF;
@@ -278,12 +280,12 @@ void init(void) {
  158:	34 e0       	ldi	r19, 0x04	; 4
  15a:	b3 0a       	sbc	r11, r19
 	unsigned int RIGHT= ICR1 -1650;
- 15c:	80 80       	ld	r8, Z
- 15e:	91 80       	ldd	r9, Z+1	; 0x01
+ 15c:	60 80       	ld	r6, Z
+ 15e:	71 80       	ldd	r7, Z+1	; 0x01
  160:	82 e7       	ldi	r24, 0x72	; 114
- 162:	88 1a       	sub	r8, r24
+ 162:	68 1a       	sub	r6, r24
  164:	86 e0       	ldi	r24, 0x06	; 6
- 166:	98 0a       	sbc	r9, r24
+ 166:	78 0a       	sbc	r7, r24
 	
 	unsigned int SPEED_LOW = ICR1 - 1460;
  168:	c0 80       	ld	r12, Z
@@ -293,254 +295,249 @@ void init(void) {
  170:	95 e0       	ldi	r25, 0x05	; 5
  172:	d9 0a       	sbc	r13, r25
 	unsigned int SPEED_MIDDLE = ICR1 - 1475;
- 174:	60 80       	ld	r6, Z
- 176:	71 80       	ldd	r7, Z+1	; 0x01
- 178:	a3 ec       	ldi	r26, 0xC3	; 195
- 17a:	6a 1a       	sub	r6, r26
- 17c:	a5 e0       	ldi	r26, 0x05	; 5
- 17e:	7a 0a       	sbc	r7, r26
-	unsigned int SPEED_BACK = ICR1 - 1200; //1.03 ms
+ 174:	80 80       	ld	r8, Z
+ 176:	91 80       	ldd	r9, Z+1	; 0x01
+ 178:	23 ec       	ldi	r18, 0xC3	; 195
+ 17a:	82 1a       	sub	r8, r18
+ 17c:	25 e0       	ldi	r18, 0x05	; 5
+ 17e:	92 0a       	sbc	r9, r18
+	unsigned int SPEED_BACK = ICR1 - 1350; //1.38 ms
  180:	80 81       	ld	r24, Z
  182:	91 81       	ldd	r25, Z+1	; 0x01
  184:	fc 01       	movw	r30, r24
- 186:	e0 5b       	subi	r30, 0xB0	; 176
- 188:	f4 40       	sbci	r31, 0x04	; 4
+ 186:	e6 54       	subi	r30, 0x46	; 70
+ 188:	f5 40       	sbci	r31, 0x05	; 5
  18a:	fa 83       	std	Y+2, r31	; 0x02
  18c:	e9 83       	std	Y+1, r30	; 0x01
+		}
+
+	}
 
 	
-	OCR1A = NEUTRAL;
- 18e:	e8 e8       	ldi	r30, 0x88	; 136
- 190:	f0 e0       	ldi	r31, 0x00	; 0
- 192:	2b 81       	ldd	r18, Y+3	; 0x03
- 194:	3c 81       	ldd	r19, Y+4	; 0x04
- 196:	31 83       	std	Z+1, r19	; 0x01
- 198:	20 83       	st	Z, r18
+	OCR1A = SPEED_BACK;
+ 18e:	f0 93 89 00 	sts	0x0089, r31
+ 192:	e0 93 88 00 	sts	0x0088, r30
 	OCR1B = NEUTRAL;
+ 196:	2b 81       	ldd	r18, Y+3	; 0x03
+ 198:	3c 81       	ldd	r19, Y+4	; 0x04
  19a:	30 93 8b 00 	sts	0x008B, r19
  19e:	20 93 8a 00 	sts	0x008A, r18
-	OCR1A = SPEED_BACK;
- 1a2:	89 81       	ldd	r24, Y+1	; 0x01
- 1a4:	9a 81       	ldd	r25, Y+2	; 0x02
- 1a6:	91 83       	std	Z+1, r25	; 0x01
- 1a8:	80 83       	st	Z, r24
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 1aa:	90 e0       	ldi	r25, 0x00	; 0
-			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+ 1a2:	90 e0       	ldi	r25, 0x00	; 0
+				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
 				OCR1B = LEFT;
-			} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+				} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
 				OCR1B = RIGHT;
-			} else {
+				} else {
 				PORTA = 0xEA;
- 1ac:	0f 2e       	mov	r0, r31
- 1ae:	fa ee       	ldi	r31, 0xEA	; 234
- 1b0:	4f 2e       	mov	r4, r31
- 1b2:	f0 2d       	mov	r31, r0
+ 1a4:	0f 2e       	mov	r0, r31
+ 1a6:	fa ee       	ldi	r31, 0xEA	; 234
+ 1a8:	4f 2e       	mov	r4, r31
+ 1aa:	f0 2d       	mov	r31, r0
 			if (angle_cm == SPI_ANGLE_NEUTRAL) {
 				OCR1B = NEUTRAL;
-			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
 				OCR1B = LEFT;
-			} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+				} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
 				OCR1B = RIGHT;
- 1b4:	0f 2e       	mov	r0, r31
- 1b6:	fa e8       	ldi	r31, 0x8A	; 138
- 1b8:	ef 2e       	mov	r14, r31
- 1ba:	f1 2c       	mov	r15, r1
- 1bc:	f0 2d       	mov	r31, r0
-			} else if (speed_cm == SPI_SPEED_MIDDLE) {
+ 1ac:	0f 2e       	mov	r0, r31
+ 1ae:	fa e8       	ldi	r31, 0x8A	; 138
+ 1b0:	ef 2e       	mov	r14, r31
+ 1b2:	f1 2c       	mov	r15, r1
+ 1b4:	f0 2d       	mov	r31, r0
+				} else if (speed_cm == SPI_SPEED_MIDDLE) {
 				OCR1A = SPEED_MIDDLE;
-			}else if (speed_cm == SPI_BACK) {
+				}else if (speed_cm == SPI_BACK) {
 				OCR1A = SPEED_BACK;
-			}else {
+				}else {
 				PORTA = 0xAE;
- 1be:	0f 2e       	mov	r0, r31
- 1c0:	fe ea       	ldi	r31, 0xAE	; 174
- 1c2:	3f 2e       	mov	r3, r31
- 1c4:	f0 2d       	mov	r31, r0
-			} else if (speed_cm == SPI_SPEED_LOW) {
+ 1b6:	0f 2e       	mov	r0, r31
+ 1b8:	fe ea       	ldi	r31, 0xAE	; 174
+ 1ba:	3f 2e       	mov	r3, r31
+ 1bc:	f0 2d       	mov	r31, r0
+				} else if (speed_cm == SPI_SPEED_LOW) {
 				OCR1A = SPEED_LOW;
-			} else if (speed_cm == SPI_SPEED_MIDDLE) {
+				} else if (speed_cm == SPI_SPEED_MIDDLE) {
 				OCR1A = SPEED_MIDDLE;
-			}else if (speed_cm == SPI_BACK) {
+				}else if (speed_cm == SPI_BACK) {
 				OCR1A = SPEED_BACK;
- 1c6:	08 e8       	ldi	r16, 0x88	; 136
- 1c8:	10 e0       	ldi	r17, 0x00	; 0
+ 1be:	08 e8       	ldi	r16, 0x88	; 136
+ 1c0:	10 e0       	ldi	r17, 0x00	; 0
 		
 		spi_rdy = 0;
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
 			spi_rdy = (spi_read == SPI_START);
- 1ca:	55 24       	eor	r5, r5
- 1cc:	53 94       	inc	r5
- 1ce:	08 c0       	rjmp	.+16     	; 0x1e0 <main+0xba>
+ 1c2:	55 24       	eor	r5, r5
+ 1c4:	53 94       	inc	r5
+ 1c6:	08 c0       	rjmp	.+16     	; 0x1d8 <main+0xb2>
 	while(1) {
 		
 		spi_rdy = 0;
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
- 1d0:	8e ee       	ldi	r24, 0xEE	; 238
- 1d2:	7e df       	rcall	.-260    	; 0xd0 <SPI_tranceive>
+ 1c8:	8e ee       	ldi	r24, 0xEE	; 238
+ 1ca:	82 df       	rcall	.-252    	; 0xd0 <SPI_tranceive>
 			spi_rdy = (spi_read == SPI_START);
- 1d4:	95 2d       	mov	r25, r5
- 1d6:	8a 3a       	cpi	r24, 0xAA	; 170
- 1d8:	19 f0       	breq	.+6      	; 0x1e0 <main+0xba>
- 1da:	90 e0       	ldi	r25, 0x00	; 0
- 1dc:	01 c0       	rjmp	.+2      	; 0x1e0 <main+0xba>
+ 1cc:	95 2d       	mov	r25, r5
+ 1ce:	8a 3a       	cpi	r24, 0xAA	; 170
+ 1d0:	19 f0       	breq	.+6      	; 0x1d8 <main+0xb2>
+ 1d2:	90 e0       	ldi	r25, 0x00	; 0
+ 1d4:	01 c0       	rjmp	.+2      	; 0x1d8 <main+0xb2>
 	OCR1B = NEUTRAL;
-	OCR1A = SPEED_BACK;
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 1de:	90 e0       	ldi	r25, 0x00	; 0
+ 1d6:	90 e0       	ldi	r25, 0x00	; 0
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
- 1e0:	99 23       	and	r25, r25
- 1e2:	b1 f3       	breq	.-20     	; 0x1d0 <main+0xaa>
+ 1d8:	99 23       	and	r25, r25
+ 1da:	b1 f3       	breq	.-20     	; 0x1c8 <main+0xa2>
 			
 			cntr++;
 		}
 		cntr = 0;
 		
 		read_data_send_check();
- 1e4:	7b df       	rcall	.-266    	; 0xdc <read_data_send_check>
+ 1dc:	7f df       	rcall	.-258    	; 0xdc <read_data_send_check>
+	unsigned int SPEED_BACK = ICR1 - 1350; //1.38 ms
+	
+	void impl_speed_direction(void) {
 		
 		/* Check if communication was a success */
 		spi_success = SPI_tranceive(SPI_NAN);
- 1e6:	80 e0       	ldi	r24, 0x00	; 0
- 1e8:	73 df       	rcall	.-282    	; 0xd0 <SPI_tranceive>
+ 1de:	80 e0       	ldi	r24, 0x00	; 0
+ 1e0:	77 df       	rcall	.-274    	; 0xd0 <SPI_tranceive>
 		
 		if (spi_success) {
- 1ea:	88 23       	and	r24, r24
- 1ec:	c1 f3       	breq	.-16     	; 0x1de <main+0xb8>
+ 1e2:	88 23       	and	r24, r24
+ 1e4:	c1 f3       	breq	.-16     	; 0x1d6 <main+0xb0>
 			if (speed_cm == SPI_SPEED_NEUTRAL) {
- 1ee:	80 91 02 01 	lds	r24, 0x0102
- 1f2:	81 11       	cpse	r24, r1
- 1f4:	07 c0       	rjmp	.+14     	; 0x204 <main+0xde>
+ 1e6:	80 91 02 01 	lds	r24, 0x0102
+ 1ea:	81 11       	cpse	r24, r1
+ 1ec:	06 c0       	rjmp	.+12     	; 0x1fa <main+0xd4>
 				OCR1A = NEUTRAL;
- 1f6:	eb 81       	ldd	r30, Y+3	; 0x03
- 1f8:	fc 81       	ldd	r31, Y+4	; 0x04
- 1fa:	d8 01       	movw	r26, r16
- 1fc:	11 96       	adiw	r26, 0x01	; 1
- 1fe:	fc 93       	st	X, r31
- 200:	ee 93       	st	-X, r30
- 202:	17 c0       	rjmp	.+46     	; 0x232 <main+0x10c>
-			} else if (speed_cm == SPI_SPEED_LOW) {
- 204:	80 31       	cpi	r24, 0x10	; 16
- 206:	29 f4       	brne	.+10     	; 0x212 <main+0xec>
+ 1ee:	2b 81       	ldd	r18, Y+3	; 0x03
+ 1f0:	3c 81       	ldd	r19, Y+4	; 0x04
+ 1f2:	f8 01       	movw	r30, r16
+ 1f4:	31 83       	std	Z+1, r19	; 0x01
+ 1f6:	20 83       	st	Z, r18
+ 1f8:	15 c0       	rjmp	.+42     	; 0x224 <main+0xfe>
+				} else if (speed_cm == SPI_SPEED_LOW) {
+ 1fa:	80 31       	cpi	r24, 0x10	; 16
+ 1fc:	21 f4       	brne	.+8      	; 0x206 <main+0xe0>
 				OCR1A = SPEED_LOW;
- 208:	d8 01       	movw	r26, r16
- 20a:	11 96       	adiw	r26, 0x01	; 1
- 20c:	dc 92       	st	X, r13
- 20e:	ce 92       	st	-X, r12
- 210:	10 c0       	rjmp	.+32     	; 0x232 <main+0x10c>
-			} else if (speed_cm == SPI_SPEED_MIDDLE) {
- 212:	80 32       	cpi	r24, 0x20	; 32
- 214:	21 f4       	brne	.+8      	; 0x21e <main+0xf8>
+ 1fe:	f8 01       	movw	r30, r16
+ 200:	d1 82       	std	Z+1, r13	; 0x01
+ 202:	c0 82       	st	Z, r12
+ 204:	0f c0       	rjmp	.+30     	; 0x224 <main+0xfe>
+				} else if (speed_cm == SPI_SPEED_MIDDLE) {
+ 206:	80 32       	cpi	r24, 0x20	; 32
+ 208:	21 f4       	brne	.+8      	; 0x212 <main+0xec>
 				OCR1A = SPEED_MIDDLE;
- 216:	f8 01       	movw	r30, r16
- 218:	71 82       	std	Z+1, r7	; 0x01
- 21a:	60 82       	st	Z, r6
- 21c:	0a c0       	rjmp	.+20     	; 0x232 <main+0x10c>
-			}else if (speed_cm == SPI_BACK) {
- 21e:	80 33       	cpi	r24, 0x30	; 48
- 220:	39 f4       	brne	.+14     	; 0x230 <main+0x10a>
+ 20a:	f8 01       	movw	r30, r16
+ 20c:	91 82       	std	Z+1, r9	; 0x01
+ 20e:	80 82       	st	Z, r8
+ 210:	09 c0       	rjmp	.+18     	; 0x224 <main+0xfe>
+				}else if (speed_cm == SPI_BACK) {
+ 212:	80 33       	cpi	r24, 0x30	; 48
+ 214:	31 f4       	brne	.+12     	; 0x222 <main+0xfc>
 				OCR1A = SPEED_BACK;
- 222:	e9 81       	ldd	r30, Y+1	; 0x01
- 224:	fa 81       	ldd	r31, Y+2	; 0x02
- 226:	d8 01       	movw	r26, r16
- 228:	11 96       	adiw	r26, 0x01	; 1
- 22a:	fc 93       	st	X, r31
- 22c:	ee 93       	st	-X, r30
- 22e:	01 c0       	rjmp	.+2      	; 0x232 <main+0x10c>
-			}else {
+ 216:	29 81       	ldd	r18, Y+1	; 0x01
+ 218:	3a 81       	ldd	r19, Y+2	; 0x02
+ 21a:	f8 01       	movw	r30, r16
+ 21c:	31 83       	std	Z+1, r19	; 0x01
+ 21e:	20 83       	st	Z, r18
+ 220:	01 c0       	rjmp	.+2      	; 0x224 <main+0xfe>
+				}else {
 				PORTA = 0xAE;
- 230:	32 b8       	out	0x02, r3	; 2
+ 222:	32 b8       	out	0x02, r3	; 2
 			}
 			
 			if (angle_cm == SPI_ANGLE_NEUTRAL) {
- 232:	80 91 01 01 	lds	r24, 0x0101
- 236:	81 11       	cpse	r24, r1
- 238:	08 c0       	rjmp	.+16     	; 0x24a <main+0x124>
+ 224:	80 91 01 01 	lds	r24, 0x0101
+ 228:	81 11       	cpse	r24, r1
+ 22a:	07 c0       	rjmp	.+14     	; 0x23a <main+0x114>
 				OCR1B = NEUTRAL;
- 23a:	eb 81       	ldd	r30, Y+3	; 0x03
- 23c:	fc 81       	ldd	r31, Y+4	; 0x04
- 23e:	d7 01       	movw	r26, r14
- 240:	11 96       	adiw	r26, 0x01	; 1
- 242:	fc 93       	st	X, r31
- 244:	ee 93       	st	-X, r30
+ 22c:	2b 81       	ldd	r18, Y+3	; 0x03
+ 22e:	3c 81       	ldd	r19, Y+4	; 0x04
+ 230:	f7 01       	movw	r30, r14
+ 232:	31 83       	std	Z+1, r19	; 0x01
+ 234:	20 83       	st	Z, r18
 	OCR1B = NEUTRAL;
-	OCR1A = SPEED_BACK;
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 246:	90 e0       	ldi	r25, 0x00	; 0
- 248:	cb cf       	rjmp	.-106    	; 0x1e0 <main+0xba>
+ 236:	90 e0       	ldi	r25, 0x00	; 0
+ 238:	cf cf       	rjmp	.-98     	; 0x1d8 <main+0xb2>
 				PORTA = 0xAE;
 			}
 			
 			if (angle_cm == SPI_ANGLE_NEUTRAL) {
 				OCR1B = NEUTRAL;
-			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
- 24a:	80 31       	cpi	r24, 0x10	; 16
- 24c:	31 f4       	brne	.+12     	; 0x25a <main+0x134>
+				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+ 23a:	80 31       	cpi	r24, 0x10	; 16
+ 23c:	29 f4       	brne	.+10     	; 0x248 <main+0x122>
 				OCR1B = LEFT;
- 24e:	d7 01       	movw	r26, r14
- 250:	11 96       	adiw	r26, 0x01	; 1
- 252:	bc 92       	st	X, r11
- 254:	ae 92       	st	-X, r10
+ 23e:	f7 01       	movw	r30, r14
+ 240:	b1 82       	std	Z+1, r11	; 0x01
+ 242:	a0 82       	st	Z, r10
 	OCR1B = NEUTRAL;
-	OCR1A = SPEED_BACK;
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 256:	90 e0       	ldi	r25, 0x00	; 0
- 258:	c3 cf       	rjmp	.-122    	; 0x1e0 <main+0xba>
+ 244:	90 e0       	ldi	r25, 0x00	; 0
+ 246:	c8 cf       	rjmp	.-112    	; 0x1d8 <main+0xb2>
 			
 			if (angle_cm == SPI_ANGLE_NEUTRAL) {
 				OCR1B = NEUTRAL;
-			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
 				OCR1B = LEFT;
-			} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
- 25a:	80 32       	cpi	r24, 0x20	; 32
- 25c:	29 f4       	brne	.+10     	; 0x268 <main+0x142>
+				} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+ 248:	80 32       	cpi	r24, 0x20	; 32
+ 24a:	29 f4       	brne	.+10     	; 0x256 <main+0x130>
 				OCR1B = RIGHT;
- 25e:	f7 01       	movw	r30, r14
- 260:	91 82       	std	Z+1, r9	; 0x01
- 262:	80 82       	st	Z, r8
+ 24c:	f7 01       	movw	r30, r14
+ 24e:	71 82       	std	Z+1, r7	; 0x01
+ 250:	60 82       	st	Z, r6
 	OCR1B = NEUTRAL;
-	OCR1A = SPEED_BACK;
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 264:	90 e0       	ldi	r25, 0x00	; 0
- 266:	bc cf       	rjmp	.-136    	; 0x1e0 <main+0xba>
-			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+ 252:	90 e0       	ldi	r25, 0x00	; 0
+ 254:	c1 cf       	rjmp	.-126    	; 0x1d8 <main+0xb2>
+				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
 				OCR1B = LEFT;
-			} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+				} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
 				OCR1B = RIGHT;
-			} else {
+				} else {
 				PORTA = 0xEA;
- 268:	42 b8       	out	0x02, r4	; 2
+ 256:	42 b8       	out	0x02, r4	; 2
 	OCR1B = NEUTRAL;
-	OCR1A = SPEED_BACK;
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 26a:	90 e0       	ldi	r25, 0x00	; 0
- 26c:	b9 cf       	rjmp	.-142    	; 0x1e0 <main+0xba>
+ 258:	90 e0       	ldi	r25, 0x00	; 0
+ 25a:	be cf       	rjmp	.-132    	; 0x1d8 <main+0xb2>
 
-0000026e <_exit>:
- 26e:	f8 94       	cli
+0000025c <_exit>:
+ 25c:	f8 94       	cli
 
-00000270 <__stop_program>:
- 270:	ff cf       	rjmp	.-2      	; 0x270 <__stop_program>
+0000025e <__stop_program>:
+ 25e:	ff cf       	rjmp	.-2      	; 0x25e <__stop_program>

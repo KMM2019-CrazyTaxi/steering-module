@@ -148,6 +148,8 @@ void read_data_send_check(void) {
 	SPI_tranceive(check_byte);	
 }
 
+
+
 void PWM_init() {
 	DDRD |= 0xFF;
 	
@@ -179,10 +181,42 @@ int main(void) {
 	
 	unsigned int SPEED_LOW = ICR1 - 1460;
 	unsigned int SPEED_MIDDLE = ICR1 - 1475;
-	unsigned int SPEED_BACK = ICR1 - 1200; //1.22 ms
+	unsigned int SPEED_BACK = ICR1 - 1350; //1.38 ms
+	
+	void impl_speed_direction(void) {
+		
+		/* Check if communication was a success */
+		spi_success = SPI_tranceive(SPI_NAN);
+		
+		if (spi_success) {
+			if (speed_cm == SPI_SPEED_NEUTRAL) {
+				OCR1A = NEUTRAL;
+				} else if (speed_cm == SPI_SPEED_LOW) {
+				OCR1A = SPEED_LOW;
+				} else if (speed_cm == SPI_SPEED_MIDDLE) {
+				OCR1A = SPEED_MIDDLE;
+				}else if (speed_cm == SPI_BACK) {
+				OCR1A = SPEED_BACK;
+				}else {
+				PORTA = 0xAE;
+			}
+			
+			if (angle_cm == SPI_ANGLE_NEUTRAL) {
+				OCR1B = NEUTRAL;
+				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+				OCR1B = LEFT;
+				} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+				OCR1B = RIGHT;
+				} else {
+				PORTA = 0xEA;
+			}
+			
+		}
+
+	}
 
 	
-	OCR1A = NEUTRAL;
+	OCR1A = SPEED_BACK;
 	OCR1B = NEUTRAL;
 	//OCR1A = SPEED_BACK;
 	
@@ -199,34 +233,9 @@ int main(void) {
 		cntr = 0;
 		
 		read_data_send_check();
+		impl_speed_direction();
 		
-		/* Check if communication was a success */
-		spi_success = SPI_tranceive(SPI_NAN);
 		
-		if (spi_success) {
-			if (speed_cm == SPI_SPEED_NEUTRAL) {
-				OCR1A = NEUTRAL;
-			} else if (speed_cm == SPI_SPEED_LOW) {
-				OCR1A = SPEED_LOW;
-			} else if (speed_cm == SPI_SPEED_MIDDLE) {
-				OCR1A = SPEED_MIDDLE;
-			}else if (speed_cm == SPI_BACK) {
-				OCR1A = SPEED_BACK;
-			}else {
-				PORTA = 0xAE;
-			}
-			
-			if (angle_cm == SPI_ANGLE_NEUTRAL) {
-				OCR1B = NEUTRAL;
-			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
-				OCR1B = LEFT;
-			} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
-				OCR1B = RIGHT;
-			} else {
-				PORTA = 0xEA;
-			}
-			
-		}
 	}
 }
 
