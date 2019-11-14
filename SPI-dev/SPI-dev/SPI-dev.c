@@ -30,10 +30,11 @@
 #define SPI_SPEED_NEUTRAL 0x00
 #define SPI_SPEED_LOW 0x10
 #define SPI_SPEED_MIDDLE 0x20
+#define SPI_BACK 0x30
 
 #define SPI_ANGLE_NEUTRAL 0x00
-#define SPI_ANGLE_LEFT 0xA0
-#define SPI_ANGLE_RIGHT 0xB0
+#define SPI_ANGLE_LEFT 0x10
+#define SPI_ANGLE_RIGHT 0x20
 
 
 /* Global variables */
@@ -178,10 +179,12 @@ int main(void) {
 	
 	unsigned int SPEED_LOW = ICR1 - 1460;
 	unsigned int SPEED_MIDDLE = ICR1 - 1475;
+	unsigned int SPEED_BACK = ICR1 - 1200; //1.22 ms
 
 	
 	OCR1A = NEUTRAL;
 	OCR1B = NEUTRAL;
+	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
@@ -207,15 +210,17 @@ int main(void) {
 				OCR1A = SPEED_LOW;
 			} else if (speed_cm == SPI_SPEED_MIDDLE) {
 				OCR1A = SPEED_MIDDLE;
-			} else {
+			}else if (speed_cm == SPI_BACK) {
+				OCR1A = SPEED_BACK;
+			}else {
 				PORTA = 0xAE;
 			}
 			
 			if (angle_cm == SPI_ANGLE_NEUTRAL) {
 				OCR1B = NEUTRAL;
-			} else if (angle_cm == SPI_ANGLE_LEFT) {
+			} else if (angle_cm ==  SPI_ANGLE_LEFT) {
 				OCR1B = LEFT;
-			} else if (angle_cm == SPI_ANGLE_RIGHT) {
+			} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
 				OCR1B = RIGHT;
 			} else {
 				PORTA = 0xEA;
