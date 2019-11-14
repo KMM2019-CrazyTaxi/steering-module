@@ -3,29 +3,29 @@ SPI-dev.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  00000160  000001f4  2**0
+  0 .data         00000002  00800100  00000140  000001d4  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000160  00000000  00000000  00000094  2**1
+  1 .text         00000140  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000001  00800102  00800102  000001f6  2**0
+  2 .bss          00000001  00800102  00800102  000001d6  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000001f6  2**0
+  3 .comment      00000030  00000000  00000000  000001d6  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000068  00000000  00000000  00000226  2**0
+  4 .debug_aranges 00000068  00000000  00000000  00000206  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000004a6  00000000  00000000  0000028e  2**0
+  5 .debug_info   00000430  00000000  00000000  0000026e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000021c  00000000  00000000  00000734  2**0
+  6 .debug_abbrev 000001ff  00000000  00000000  0000069e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000034b  00000000  00000000  00000950  2**0
+  7 .debug_line   0000031f  00000000  00000000  0000089d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000000dc  00000000  00000000  00000c9c  2**2
+  8 .debug_frame  000000e0  00000000  00000000  00000bbc  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000021b  00000000  00000000  00000d78  2**0
+  9 .debug_str    0000026a  00000000  00000000  00000c9c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000035e  00000000  00000000  00000f93  2**0
+ 10 .debug_loc    00000376  00000000  00000000  00000f06  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000058  00000000  00000000  000012f1  2**0
+ 11 .debug_ranges 00000058  00000000  00000000  0000127c  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -114,7 +114,7 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	e0 e6       	ldi	r30, 0x60	; 96
+  9e:	e0 e4       	ldi	r30, 0x40	; 64
   a0:	f1 e0       	ldi	r31, 0x01	; 1
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
@@ -138,8 +138,8 @@ Disassembly of section .text:
   bc:	a3 30       	cpi	r26, 0x03	; 3
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
-  c2:	2b d0       	rcall	.+86     	; 0x11a <main>
-  c4:	4b c0       	rjmp	.+150    	; 0x15c <_exit>
+  c2:	2f d0       	rcall	.+94     	; 0x122 <main>
+  c4:	3b c0       	rjmp	.+118    	; 0x13c <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
@@ -172,136 +172,133 @@ void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
  */
 uint8_t SPI_communicate(void) {
   dc:	cf 93       	push	r28
+  de:	df 93       	push	r29
 	uint8_t start_cm, restart_cm;
 	uint8_t status = NAN;
 	/* Read START byte */
 	start_cm = SPI_tranceive(status);
-  de:	80 e0       	ldi	r24, 0x00	; 0
-  e0:	f7 df       	rcall	.-18     	; 0xd0 <SPI_tranceive>
+  e0:	80 e0       	ldi	r24, 0x00	; 0
+  e2:	f6 df       	rcall	.-20     	; 0xd0 <SPI_tranceive>
+  e4:	c8 2f       	mov	r28, r24
 	
 	if (start_cm != SPI_START) {
-  e2:	8a 3a       	cpi	r24, 0xAA	; 170
-  e4:	11 f4       	brne	.+4      	; 0xea <SPI_communicate+0xe>
+  e6:	8a 3a       	cpi	r24, 0xAA	; 170
+  e8:	11 f4       	brne	.+4      	; 0xee <SPI_communicate+0x12>
  * Returns 1 if the communication was successful or 0 if it failed.
  * Ideally we want as few function calls as possible in this method.
  */
 uint8_t SPI_communicate(void) {
 	uint8_t start_cm, restart_cm;
 	uint8_t status = NAN;
-  e6:	c0 e0       	ldi	r28, 0x00	; 0
-  e8:	01 c0       	rjmp	.+2      	; 0xec <SPI_communicate+0x10>
+  ea:	d0 e0       	ldi	r29, 0x00	; 0
+  ec:	01 c0       	rjmp	.+2      	; 0xf0 <SPI_communicate+0x14>
 	/* Read START byte */
 	start_cm = SPI_tranceive(status);
 	
 	if (start_cm != SPI_START) {
 		status = SPI_ERROR;
-  ea:	c5 e5       	ldi	r28, 0x55	; 85
+  ee:	d5 e5       	ldi	r29, 0x55	; 85
 	}
 	/* Read Speed byte */
 	speed_cm = SPI_tranceive(status);
-  ec:	8c 2f       	mov	r24, r28
-  ee:	f0 df       	rcall	.-32     	; 0xd0 <SPI_tranceive>
-  f0:	80 93 02 01 	sts	0x0102, r24
+  f0:	8d 2f       	mov	r24, r29
+  f2:	ee df       	rcall	.-36     	; 0xd0 <SPI_tranceive>
+  f4:	80 93 02 01 	sts	0x0102, r24
 	
 	/* Read Angle byte */
 	angle_cm = SPI_tranceive(status);
-  f4:	8c 2f       	mov	r24, r28
-  f6:	ec df       	rcall	.-40     	; 0xd0 <SPI_tranceive>
-  f8:	80 93 01 01 	sts	0x0101, r24
+  f8:	8d 2f       	mov	r24, r29
+  fa:	ea df       	rcall	.-44     	; 0xd0 <SPI_tranceive>
+  fc:	80 93 01 01 	sts	0x0101, r24
 
 	/* Send CHECK byte */
-	check_byte = speed_cm ^ angle_cm;
-  fc:	90 91 02 01 	lds	r25, 0x0102
- 100:	89 27       	eor	r24, r25
- 102:	80 93 00 01 	sts	0x0100, r24
+	check_byte = start_cm ^ speed_cm ^ angle_cm;
+ 100:	90 91 02 01 	lds	r25, 0x0102
+ 104:	c9 27       	eor	r28, r25
+ 106:	8c 27       	eor	r24, r28
+ 108:	80 93 00 01 	sts	0x0100, r24
 	SPI_tranceive(check_byte);
- 106:	e4 df       	rcall	.-56     	; 0xd0 <SPI_tranceive>
+ 10c:	e1 df       	rcall	.-62     	; 0xd0 <SPI_tranceive>
 	
 	/* Read RESTART byte */
+	
 	restart_cm = SPI_tranceive(NAN);
- 108:	80 e0       	ldi	r24, 0x00	; 0
- 10a:	e2 df       	rcall	.-60     	; 0xd0 <SPI_tranceive>
+ 10e:	80 e0       	ldi	r24, 0x00	; 0
+ 110:	df df       	rcall	.-66     	; 0xd0 <SPI_tranceive>
 	
 	if (restart_cm == SPI_FINISHED) {
- 10c:	91 e0       	ldi	r25, 0x01	; 1
- 10e:	86 36       	cpi	r24, 0x66	; 102
- 110:	09 f0       	breq	.+2      	; 0x114 <SPI_communicate+0x38>
- 112:	90 e0       	ldi	r25, 0x00	; 0
+ 112:	91 e0       	ldi	r25, 0x01	; 1
+ 114:	86 36       	cpi	r24, 0x66	; 102
+ 116:	09 f0       	breq	.+2      	; 0x11a <SPI_communicate+0x3e>
+ 118:	90 e0       	ldi	r25, 0x00	; 0
 		return 1;
 	} else {
 		return 0;
 	}
+	
 }
- 114:	89 2f       	mov	r24, r25
- 116:	cf 91       	pop	r28
- 118:	08 95       	ret
+ 11a:	89 2f       	mov	r24, r25
+ 11c:	df 91       	pop	r29
+ 11e:	cf 91       	pop	r28
+ 120:	08 95       	ret
 
-0000011a <main>:
+00000122 <main>:
 
 int main(void) {
 
 
 	SPI_SlaveInit();
- 11a:	d6 df       	rcall	.-84     	; 0xc8 <SPI_SlaveInit>
+ 122:	d2 df       	rcall	.-92     	; 0xc8 <SPI_SlaveInit>
 
 	return check;
 }
 
 void init(void) {
 	DDRA = 0xFF;
- 11c:	8f ef       	ldi	r24, 0xFF	; 255
- 11e:	81 b9       	out	0x01, r24	; 1
+ 124:	8f ef       	ldi	r24, 0xFF	; 255
+ 126:	81 b9       	out	0x01, r24	; 1
 
 
 	SPI_SlaveInit();
 	init();
 
 	PORTA = 0xFF; 	
- 120:	82 b9       	out	0x02, r24	; 2
-
-	while(1) {
-		SPI_communicate();
- 122:	dc df       	rcall	.-72     	; 0xdc <SPI_communicate>
-	
-		PORTA = speed_cm;
- 124:	80 91 02 01 	lds	r24, 0x0102
  128:	82 b9       	out	0x02, r24	; 2
-	#else
-		//round up by default
-		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
-	#endif
+		success = SPI_communicate();
+		
+		if (success) {
+			PORTA = 0x44;
+		} else {
+			PORTA = 0x88;
+ 12a:	d8 e8       	ldi	r29, 0x88	; 136
+	
+	while(1) {
+		success = SPI_communicate();
+		
+		if (success) {
+			PORTA = 0x44;
+ 12c:	c4 e4       	ldi	r28, 0x44	; 68
+	uint8_t spi_send_2 = 0x44;
+	
+	uint8_t success;
+	
+	while(1) {
+		success = SPI_communicate();
+ 12e:	d6 df       	rcall	.-84     	; 0xdc <SPI_communicate>
+		
+		if (success) {
+ 130:	88 23       	and	r24, r24
+ 132:	11 f0       	breq	.+4      	; 0x138 <main+0x16>
+			PORTA = 0x44;
+ 134:	c2 b9       	out	0x02, r28	; 2
+ 136:	fb cf       	rjmp	.-10     	; 0x12e <main+0xc>
+		} else {
+			PORTA = 0x88;
+ 138:	d2 b9       	out	0x02, r29	; 2
+ 13a:	f9 cf       	rjmp	.-14     	; 0x12e <main+0xc>
 
-	__builtin_avr_delay_cycles(__ticks_dc);
- 12a:	87 ea       	ldi	r24, 0xA7	; 167
- 12c:	91 e6       	ldi	r25, 0x61	; 97
- 12e:	01 97       	sbiw	r24, 0x01	; 1
- 130:	f1 f7       	brne	.-4      	; 0x12e <main+0x14>
- 132:	00 c0       	rjmp	.+0      	; 0x134 <main+0x1a>
- 134:	00 00       	nop
-		_delay_ms(100);
-		PORTA = angle_cm;
- 136:	80 91 01 01 	lds	r24, 0x0101
- 13a:	82 b9       	out	0x02, r24	; 2
- 13c:	87 ea       	ldi	r24, 0xA7	; 167
- 13e:	91 e6       	ldi	r25, 0x61	; 97
- 140:	01 97       	sbiw	r24, 0x01	; 1
- 142:	f1 f7       	brne	.-4      	; 0x140 <main+0x26>
- 144:	00 c0       	rjmp	.+0      	; 0x146 <main+0x2c>
- 146:	00 00       	nop
-		_delay_ms(100);
-		PORTA = check_byte;
- 148:	80 91 00 01 	lds	r24, 0x0100
- 14c:	82 b9       	out	0x02, r24	; 2
- 14e:	87 ea       	ldi	r24, 0xA7	; 167
- 150:	91 e6       	ldi	r25, 0x61	; 97
- 152:	01 97       	sbiw	r24, 0x01	; 1
- 154:	f1 f7       	brne	.-4      	; 0x152 <main+0x38>
- 156:	00 c0       	rjmp	.+0      	; 0x158 <main+0x3e>
- 158:	00 00       	nop
- 15a:	e3 cf       	rjmp	.-58     	; 0x122 <main+0x8>
+0000013c <_exit>:
+ 13c:	f8 94       	cli
 
-0000015c <_exit>:
- 15c:	f8 94       	cli
-
-0000015e <__stop_program>:
- 15e:	ff cf       	rjmp	.-2      	; 0x15e <__stop_program>
+0000013e <__stop_program>:
+ 13e:	ff cf       	rjmp	.-2      	; 0x13e <__stop_program>

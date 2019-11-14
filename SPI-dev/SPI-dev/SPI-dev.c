@@ -138,10 +138,11 @@ uint8_t SPI_communicate(void) {
 	angle_cm = SPI_tranceive(status);
 
 	/* Send CHECK byte */
-	check_byte = speed_cm ^ angle_cm;
+	check_byte = start_cm ^ speed_cm ^ angle_cm;
 	SPI_tranceive(check_byte);
 	
 	/* Read RESTART byte */
+	
 	restart_cm = SPI_tranceive(NAN);
 	
 	if (restart_cm == SPI_FINISHED) {
@@ -149,6 +150,7 @@ uint8_t SPI_communicate(void) {
 	} else {
 		return 0;
 	}
+	
 }
 
 int main(void) {
@@ -159,14 +161,20 @@ int main(void) {
 
 	PORTA = 0xFF; 	
 
-	while(1) {
-		SPI_communicate();
+	uint8_t spi_read_1;
+	uint8_t spi_read_2;
+	uint8_t spi_send_1 = 0x55;
+	uint8_t spi_send_2 = 0x44;
 	
-		PORTA = speed_cm;
-		_delay_ms(100);
-		PORTA = angle_cm;
-		_delay_ms(100);
-		PORTA = check_byte;
-		_delay_ms(100);
+	uint8_t success;
+	
+	while(1) {
+		success = SPI_communicate();
+		
+		if (success) {
+			PORTA = 0x44;
+		} else {
+			PORTA = 0x88;
+		}
 	}
 }
