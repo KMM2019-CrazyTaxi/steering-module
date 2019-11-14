@@ -24,6 +24,7 @@
 #define SPI_FINISHED 0x66
 #define SPI_RESTART 0x99
 #define SPI_ERROR 0x55
+#define SPI_ACK 0xEE
 
 /* Global variables */
 int8_t speed_cm = 0x00;
@@ -122,35 +123,18 @@ void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
  * Returns 1 if the communication was successful or 0 if it failed.
  * Ideally we want as few function calls as possible in this method.
  */
-uint8_t SPI_communicate(void) {
-	uint8_t start_cm, restart_cm;
-	uint8_t status = NAN;
-	/* Read START byte */
-	start_cm = SPI_tranceive(status);
-	
-	if (start_cm != SPI_START) {
-		status = SPI_ERROR;
-	}
+void read_data_send_check(void) {
 	/* Read Speed byte */
-	speed_cm = SPI_tranceive(status);
+	speed_cm = SPI_tranceive(SPI_NAN);
+	
+	PORTA = 0xEE;
 	
 	/* Read Angle byte */
-	angle_cm = SPI_tranceive(status);
+	angle_cm = SPI_tranceive(SPI_NAN);
 
 	/* Send CHECK byte */
-	check_byte = start_cm ^ speed_cm ^ angle_cm;
-	SPI_tranceive(check_byte);
-	
-	/* Read RESTART byte */
-	
-	restart_cm = SPI_tranceive(NAN);
-	
-	if (restart_cm == SPI_FINISHED) {
-		return 1;
-	} else {
-		return 0;
-	}
-	
+	check_byte = speed_cm ^ angle_cm;
+	SPI_tranceive(check_byte);	
 }
 
 int main(void) {
@@ -159,22 +143,31 @@ int main(void) {
 	SPI_SlaveInit();
 	init();
 
-	PORTA = 0xFF; 	
-
-	uint8_t spi_read_1;
-	uint8_t spi_read_2;
-	uint8_t spi_send_1 = 0x55;
-	uint8_t spi_send_2 = 0x44;
+	PORTA = 0xBB; 	
 	
-	uint8_t success;
+	uint8_t spi_rdy = 0;
+	uint8_t spi_success = 0;
+	
+	uint8_t spi_read = 0;
+	uint8_t cntr = 0;
 	
 	while(1) {
-		success = SPI_communicate();
 		
-		if (success) {
-			PORTA = 0x44;
-		} else {
-			PORTA = 0x88;
+		spi_rdy = 0;
+		/* SPI wait for start byte from central module */
+		while (spi_rdy == 0) {
+			PORTA = cntr;
+			spi_read = SPI_tranceive(SPI_ACK);
+			spi_rdy = (spi_read == SPI_START);
+			
+			//PORTA = spi_read;
+			cntr++;
 		}
+		cntr = 0;
+		
+		read_data_send_check();
+		
+		/* Check if communication was a success */
+		spi_success = SPI_tranceive(SPI_NAN);
 	}
 }

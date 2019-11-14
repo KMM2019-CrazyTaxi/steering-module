@@ -3,29 +3,29 @@ SPI-dev.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  00000140  000001d4  2**0
+  0 .data         00000002  00800100  00000134  000001c8  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000140  00000000  00000000  00000094  2**1
+  1 .text         00000134  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000001  00800102  00800102  000001d6  2**0
+  2 .bss          00000001  00800102  00800102  000001ca  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000001d6  2**0
+  3 .comment      00000030  00000000  00000000  000001ca  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000068  00000000  00000000  00000206  2**0
+  4 .debug_aranges 00000068  00000000  00000000  000001fa  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000430  00000000  00000000  0000026e  2**0
+  5 .debug_info   000003ff  00000000  00000000  00000262  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000001ff  00000000  00000000  0000069e  2**0
+  6 .debug_abbrev 000001d4  00000000  00000000  00000661  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000031f  00000000  00000000  0000089d  2**0
+  7 .debug_line   00000323  00000000  00000000  00000835  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000000e0  00000000  00000000  00000bbc  2**2
+  8 .debug_frame  000000d4  00000000  00000000  00000b58  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000026a  00000000  00000000  00000c9c  2**0
+  9 .debug_str    00000245  00000000  00000000  00000c2c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000376  00000000  00000000  00000f06  2**0
+ 10 .debug_loc    00000374  00000000  00000000  00000e71  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000058  00000000  00000000  0000127c  2**0
+ 11 .debug_ranges 00000058  00000000  00000000  000011e5  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -114,7 +114,7 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	e0 e4       	ldi	r30, 0x40	; 64
+  9e:	e4 e3       	ldi	r30, 0x34	; 52
   a0:	f1 e0       	ldi	r31, 0x01	; 1
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
@@ -138,8 +138,8 @@ Disassembly of section .text:
   bc:	a3 30       	cpi	r26, 0x03	; 3
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
-  c2:	2f d0       	rcall	.+94     	; 0x122 <main>
-  c4:	3b c0       	rjmp	.+118    	; 0x13c <_exit>
+  c2:	1d d0       	rcall	.+58     	; 0xfe <main>
+  c4:	35 c0       	rjmp	.+106    	; 0x130 <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
@@ -164,141 +164,133 @@ void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
   d8:	8e b5       	in	r24, 0x2e	; 46
   da:	08 95       	ret
 
-000000dc <SPI_communicate>:
-/*
- * Perform communication with the central module in accordance to the protocol. 
+000000dc <read_data_send_check>:
  * Returns 1 if the communication was successful or 0 if it failed.
  * Ideally we want as few function calls as possible in this method.
  */
-uint8_t SPI_communicate(void) {
-  dc:	cf 93       	push	r28
-  de:	df 93       	push	r29
-	uint8_t start_cm, restart_cm;
-	uint8_t status = NAN;
-	/* Read START byte */
-	start_cm = SPI_tranceive(status);
-  e0:	80 e0       	ldi	r24, 0x00	; 0
-  e2:	f6 df       	rcall	.-20     	; 0xd0 <SPI_tranceive>
-  e4:	c8 2f       	mov	r28, r24
-	
-	if (start_cm != SPI_START) {
-  e6:	8a 3a       	cpi	r24, 0xAA	; 170
-  e8:	11 f4       	brne	.+4      	; 0xee <SPI_communicate+0x12>
- * Returns 1 if the communication was successful or 0 if it failed.
- * Ideally we want as few function calls as possible in this method.
- */
-uint8_t SPI_communicate(void) {
-	uint8_t start_cm, restart_cm;
-	uint8_t status = NAN;
-  ea:	d0 e0       	ldi	r29, 0x00	; 0
-  ec:	01 c0       	rjmp	.+2      	; 0xf0 <SPI_communicate+0x14>
-	/* Read START byte */
-	start_cm = SPI_tranceive(status);
-	
-	if (start_cm != SPI_START) {
-		status = SPI_ERROR;
-  ee:	d5 e5       	ldi	r29, 0x55	; 85
-	}
+void read_data_send_check(void) {
 	/* Read Speed byte */
-	speed_cm = SPI_tranceive(status);
-  f0:	8d 2f       	mov	r24, r29
-  f2:	ee df       	rcall	.-36     	; 0xd0 <SPI_tranceive>
-  f4:	80 93 02 01 	sts	0x0102, r24
+	speed_cm = SPI_tranceive(SPI_NAN);
+  dc:	80 e0       	ldi	r24, 0x00	; 0
+  de:	f8 df       	rcall	.-16     	; 0xd0 <SPI_tranceive>
+  e0:	80 93 02 01 	sts	0x0102, r24
+	
+	PORTA = 0xEE;
+  e4:	8e ee       	ldi	r24, 0xEE	; 238
+  e6:	82 b9       	out	0x02, r24	; 2
 	
 	/* Read Angle byte */
-	angle_cm = SPI_tranceive(status);
-  f8:	8d 2f       	mov	r24, r29
-  fa:	ea df       	rcall	.-44     	; 0xd0 <SPI_tranceive>
-  fc:	80 93 01 01 	sts	0x0101, r24
+	angle_cm = SPI_tranceive(SPI_NAN);
+  e8:	80 e0       	ldi	r24, 0x00	; 0
+  ea:	f2 df       	rcall	.-28     	; 0xd0 <SPI_tranceive>
+  ec:	80 93 01 01 	sts	0x0101, r24
 
 	/* Send CHECK byte */
-	check_byte = start_cm ^ speed_cm ^ angle_cm;
- 100:	90 91 02 01 	lds	r25, 0x0102
- 104:	c9 27       	eor	r28, r25
- 106:	8c 27       	eor	r24, r28
- 108:	80 93 00 01 	sts	0x0100, r24
-	SPI_tranceive(check_byte);
- 10c:	e1 df       	rcall	.-62     	; 0xd0 <SPI_tranceive>
-	
-	/* Read RESTART byte */
-	
-	restart_cm = SPI_tranceive(NAN);
- 10e:	80 e0       	ldi	r24, 0x00	; 0
- 110:	df df       	rcall	.-66     	; 0xd0 <SPI_tranceive>
-	
-	if (restart_cm == SPI_FINISHED) {
- 112:	91 e0       	ldi	r25, 0x01	; 1
- 114:	86 36       	cpi	r24, 0x66	; 102
- 116:	09 f0       	breq	.+2      	; 0x11a <SPI_communicate+0x3e>
- 118:	90 e0       	ldi	r25, 0x00	; 0
-		return 1;
-	} else {
-		return 0;
-	}
-	
-}
- 11a:	89 2f       	mov	r24, r25
- 11c:	df 91       	pop	r29
- 11e:	cf 91       	pop	r28
- 120:	08 95       	ret
+	check_byte = speed_cm ^ angle_cm;
+  f0:	90 91 02 01 	lds	r25, 0x0102
+  f4:	89 27       	eor	r24, r25
+  f6:	80 93 00 01 	sts	0x0100, r24
+	SPI_tranceive(check_byte);	
+  fa:	ea cf       	rjmp	.-44     	; 0xd0 <SPI_tranceive>
+  fc:	08 95       	ret
 
-00000122 <main>:
+000000fe <main>:
+}
 
 int main(void) {
 
 
 	SPI_SlaveInit();
- 122:	d2 df       	rcall	.-92     	; 0xc8 <SPI_SlaveInit>
+  fe:	e4 df       	rcall	.-56     	; 0xc8 <SPI_SlaveInit>
 
 	return check;
 }
 
 void init(void) {
 	DDRA = 0xFF;
- 124:	8f ef       	ldi	r24, 0xFF	; 255
- 126:	81 b9       	out	0x01, r24	; 1
+ 100:	8f ef       	ldi	r24, 0xFF	; 255
+ 102:	81 b9       	out	0x01, r24	; 1
 
 
 	SPI_SlaveInit();
 	init();
 
-	PORTA = 0xFF; 	
- 128:	82 b9       	out	0x02, r24	; 2
-		success = SPI_communicate();
-		
-		if (success) {
-			PORTA = 0x44;
-		} else {
-			PORTA = 0x88;
- 12a:	d8 e8       	ldi	r29, 0x88	; 136
+	PORTA = 0xBB; 	
+ 104:	8b eb       	ldi	r24, 0xBB	; 187
+ 106:	82 b9       	out	0x02, r24	; 2
+ 108:	c0 e0       	ldi	r28, 0x00	; 0
+	uint8_t spi_read = 0;
+	uint8_t cntr = 0;
 	
 	while(1) {
-		success = SPI_communicate();
 		
-		if (success) {
-			PORTA = 0x44;
- 12c:	c4 e4       	ldi	r28, 0x44	; 68
-	uint8_t spi_send_2 = 0x44;
-	
-	uint8_t success;
+		spi_rdy = 0;
+ 10a:	90 e0       	ldi	r25, 0x00	; 0
+		/* SPI wait for start byte from central module */
+		while (spi_rdy == 0) {
+			PORTA = cntr;
+			spi_read = SPI_tranceive(SPI_ACK);
+			spi_rdy = (spi_read == SPI_START);
+ 10c:	d1 e0       	ldi	r29, 0x01	; 1
+ 10e:	08 c0       	rjmp	.+16     	; 0x120 <main+0x22>
+	while(1) {
+		
+		spi_rdy = 0;
+		/* SPI wait for start byte from central module */
+		while (spi_rdy == 0) {
+			PORTA = cntr;
+ 110:	c2 b9       	out	0x02, r28	; 2
+			spi_read = SPI_tranceive(SPI_ACK);
+ 112:	8e ee       	ldi	r24, 0xEE	; 238
+ 114:	dd df       	rcall	.-70     	; 0xd0 <SPI_tranceive>
+			spi_rdy = (spi_read == SPI_START);
+ 116:	9d 2f       	mov	r25, r29
+ 118:	8a 3a       	cpi	r24, 0xAA	; 170
+ 11a:	09 f0       	breq	.+2      	; 0x11e <main+0x20>
+ 11c:	90 e0       	ldi	r25, 0x00	; 0
+			
+			//PORTA = spi_read;
+			cntr++;
+ 11e:	cf 5f       	subi	r28, 0xFF	; 255
 	
 	while(1) {
-		success = SPI_communicate();
- 12e:	d6 df       	rcall	.-84     	; 0xdc <SPI_communicate>
 		
-		if (success) {
- 130:	88 23       	and	r24, r24
- 132:	11 f0       	breq	.+4      	; 0x138 <main+0x16>
-			PORTA = 0x44;
- 134:	c2 b9       	out	0x02, r28	; 2
- 136:	fb cf       	rjmp	.-10     	; 0x12e <main+0xc>
-		} else {
-			PORTA = 0x88;
- 138:	d2 b9       	out	0x02, r29	; 2
- 13a:	f9 cf       	rjmp	.-14     	; 0x12e <main+0xc>
+		spi_rdy = 0;
+		/* SPI wait for start byte from central module */
+		while (spi_rdy == 0) {
+ 120:	99 23       	and	r25, r25
+ 122:	b1 f3       	breq	.-20     	; 0x110 <main+0x12>
+			//PORTA = spi_read;
+			cntr++;
+		}
+		cntr = 0;
+		
+		read_data_send_check();
+ 124:	db df       	rcall	.-74     	; 0xdc <read_data_send_check>
+		
+		/* Check if communication was a success */
+		spi_success = SPI_tranceive(SPI_NAN);
+ 126:	80 e0       	ldi	r24, 0x00	; 0
+ 128:	d3 df       	rcall	.-90     	; 0xd0 <SPI_tranceive>
+	}
+ 12a:	c0 e0       	ldi	r28, 0x00	; 0
+	uint8_t spi_read = 0;
+	uint8_t cntr = 0;
+	
+	while(1) {
+		
+		spi_rdy = 0;
+ 12c:	90 e0       	ldi	r25, 0x00	; 0
+		
+		read_data_send_check();
+		
+		/* Check if communication was a success */
+		spi_success = SPI_tranceive(SPI_NAN);
+	}
+ 12e:	f8 cf       	rjmp	.-16     	; 0x120 <main+0x22>
 
-0000013c <_exit>:
- 13c:	f8 94       	cli
+00000130 <_exit>:
+ 130:	f8 94       	cli
 
-0000013e <__stop_program>:
- 13e:	ff cf       	rjmp	.-2      	; 0x13e <__stop_program>
+00000132 <__stop_program>:
+ 132:	ff cf       	rjmp	.-2      	; 0x132 <__stop_program>
