@@ -3,29 +3,29 @@ SPI-dev.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  0000028c  00000320  2**0
+  0 .data         00000002  00800100  00000232  000002c6  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000028c  00000000  00000000  00000094  2**1
+  1 .text         00000232  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000000d  00800102  00800102  00000322  2**0
+  2 .bss          0000000d  00800102  00800102  000002c8  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000322  2**0
+  3 .comment      00000030  00000000  00000000  000002c8  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000078  00000000  00000000  00000352  2**0
+  4 .debug_aranges 00000088  00000000  00000000  000002f8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000004b7  00000000  00000000  000003ca  2**0
+  5 .debug_info   00000514  00000000  00000000  00000380  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000001df  00000000  00000000  00000881  2**0
+  6 .debug_abbrev 000001df  00000000  00000000  00000894  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000003ef  00000000  00000000  00000a60  2**0
+  7 .debug_line   00000423  00000000  00000000  00000a73  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000000f4  00000000  00000000  00000e50  2**2
+  8 .debug_frame  00000114  00000000  00000000  00000e98  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000029c  00000000  00000000  00000f44  2**0
+  9 .debug_str    000002c4  00000000  00000000  00000fac  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000039b  00000000  00000000  000011e0  2**0
+ 10 .debug_loc    000003dd  00000000  00000000  00001270  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000068  00000000  00000000  0000157b  2**0
+ 11 .debug_ranges 00000078  00000000  00000000  0000164d  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -114,7 +114,7 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	ec e8       	ldi	r30, 0x8C	; 140
+  9e:	e2 e3       	ldi	r30, 0x32	; 50
   a0:	f2 e0       	ldi	r31, 0x02	; 2
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
@@ -138,19 +138,19 @@ Disassembly of section .text:
   bc:	af 30       	cpi	r26, 0x0F	; 15
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
-  c2:	b7 d0       	rcall	.+366    	; 0x232 <main>
-  c4:	e1 c0       	rjmp	.+450    	; 0x288 <_exit>
+  c2:	85 d0       	rcall	.+266    	; 0x1ce <main>
+  c4:	b4 c0       	rjmp	.+360    	; 0x22e <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
 
 000000c8 <SPI_SlaveInit>:
-	}
-}
-
-
-void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
-	for (uint8_t i = 0; i < size; i++) {
+	} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+		OCR1B = LEFT;
+	} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+		OCR1B = RIGHT;
+	} else {
+		PORTA = 0xEA;
   c8:	80 e4       	ldi	r24, 0x40	; 64
   ca:	84 b9       	out	0x04, r24	; 4
   cc:	8c bd       	out	0x2c, r24	; 44
@@ -165,103 +165,70 @@ void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
   da:	08 95       	ret
 
 000000dc <read_data_send_check>:
- * Returns 1 if the communication was successful or 0 if it failed.
- * Ideally we want as few function calls as possible in this method.
- */
-void read_data_send_check(void) {
-	/* Read Speed byte */
-	speed_cm = SPI_tranceive(SPI_NAN);
   dc:	80 e0       	ldi	r24, 0x00	; 0
   de:	f8 df       	rcall	.-16     	; 0xd0 <SPI_tranceive>
   e0:	80 93 02 01 	sts	0x0102, r24
-	
-	PORTA = 0xEE;
   e4:	8e ee       	ldi	r24, 0xEE	; 238
   e6:	82 b9       	out	0x02, r24	; 2
-	
-	/* Read Angle byte */
-	angle_cm = SPI_tranceive(SPI_NAN);
   e8:	80 e0       	ldi	r24, 0x00	; 0
   ea:	f2 df       	rcall	.-28     	; 0xd0 <SPI_tranceive>
   ec:	80 93 01 01 	sts	0x0101, r24
-
-	/* Send CHECK byte */
-	check_byte = speed_cm ^ angle_cm;
   f0:	90 91 02 01 	lds	r25, 0x0102
   f4:	89 27       	eor	r24, r25
   f6:	80 93 00 01 	sts	0x0100, r24
-	SPI_tranceive(check_byte);	
   fa:	ea cf       	rjmp	.-44     	; 0xd0 <SPI_tranceive>
   fc:	08 95       	ret
 
 000000fe <PWM_init>:
-}
-
-
-void PWM_init() {
-	DDRD |= 0xFF;
   fe:	8a b1       	in	r24, 0x0a	; 10
  100:	8f ef       	ldi	r24, 0xFF	; 255
  102:	8a b9       	out	0x0a, r24	; 10
-	
-	TCCR1A |=  (1<<WGM11) | (1<<WGM12) | (1<<WGM13) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
  104:	e0 e8       	ldi	r30, 0x80	; 128
  106:	f0 e0       	ldi	r31, 0x00	; 0
  108:	80 81       	ld	r24, Z
  10a:	8a 6f       	ori	r24, 0xFA	; 250
  10c:	80 83       	st	Z, r24
-	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
  10e:	e1 e8       	ldi	r30, 0x81	; 129
  110:	f0 e0       	ldi	r31, 0x00	; 0
  112:	80 81       	ld	r24, Z
  114:	8a 61       	ori	r24, 0x1A	; 26
  116:	80 83       	st	Z, r24
-	ICR1 = 19999 ;
  118:	e6 e8       	ldi	r30, 0x86	; 134
  11a:	f0 e0       	ldi	r31, 0x00	; 0
  11c:	8f e1       	ldi	r24, 0x1F	; 31
  11e:	9e e4       	ldi	r25, 0x4E	; 78
  120:	91 83       	std	Z+1, r25	; 0x01
  122:	80 83       	st	Z, r24
-	
-	
-	NEUTRAL = ICR1 -1400; // 1.43ms
  124:	80 81       	ld	r24, Z
  126:	91 81       	ldd	r25, Z+1	; 0x01
  128:	88 57       	subi	r24, 0x78	; 120
  12a:	95 40       	sbci	r25, 0x05	; 5
  12c:	90 93 0e 01 	sts	0x010E, r25
  130:	80 93 0d 01 	sts	0x010D, r24
-	LEFT = ICR1 - 1210;
  134:	80 81       	ld	r24, Z
  136:	91 81       	ldd	r25, Z+1	; 0x01
  138:	8a 5b       	subi	r24, 0xBA	; 186
  13a:	94 40       	sbci	r25, 0x04	; 4
  13c:	90 93 08 01 	sts	0x0108, r25
  140:	80 93 07 01 	sts	0x0107, r24
-	RIGHT= ICR1 -1650;
  144:	80 81       	ld	r24, Z
  146:	91 81       	ldd	r25, Z+1	; 0x01
  148:	82 57       	subi	r24, 0x72	; 114
  14a:	96 40       	sbci	r25, 0x06	; 6
  14c:	90 93 04 01 	sts	0x0104, r25
  150:	80 93 03 01 	sts	0x0103, r24
-
-	SPEED_LOW = ICR1 - 1460;
  154:	80 81       	ld	r24, Z
  156:	91 81       	ldd	r25, Z+1	; 0x01
  158:	84 5b       	subi	r24, 0xB4	; 180
  15a:	95 40       	sbci	r25, 0x05	; 5
  15c:	90 93 06 01 	sts	0x0106, r25
  160:	80 93 05 01 	sts	0x0105, r24
-	SPEED_MIDDLE = ICR1 - 1475;
  164:	80 81       	ld	r24, Z
  166:	91 81       	ldd	r25, Z+1	; 0x01
  168:	83 5c       	subi	r24, 0xC3	; 195
  16a:	95 40       	sbci	r25, 0x05	; 5
  16c:	90 93 0c 01 	sts	0x010C, r25
  170:	80 93 0b 01 	sts	0x010B, r24
-	SPEED_BACK = ICR1 - 1350; //1.38 ms
  174:	80 81       	ld	r24, Z
  176:	91 81       	ldd	r25, Z+1	; 0x01
  178:	86 54       	subi	r24, 0x46	; 70
@@ -270,197 +237,167 @@ void PWM_init() {
  180:	80 93 09 01 	sts	0x0109, r24
  184:	08 95       	ret
 
-00000186 <impl_speed_direction>:
-}
+00000186 <speed_controller>:
+void speed_controller(signed char  speed) {
+		// speeds choses between 0-127 or reversed speeds between 0-(-127),
+		// OCR1A = 18600(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
+		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
+		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
+		OCR1A = 18600 - (speed * 3);
+ 186:	99 27       	eor	r25, r25
+ 188:	87 fd       	sbrc	r24, 7
+ 18a:	90 95       	com	r25
+ 18c:	9c 01       	movw	r18, r24
+ 18e:	22 0f       	add	r18, r18
+ 190:	33 1f       	adc	r19, r19
+ 192:	82 0f       	add	r24, r18
+ 194:	93 1f       	adc	r25, r19
+ 196:	91 95       	neg	r25
+ 198:	81 95       	neg	r24
+ 19a:	91 09       	sbc	r25, r1
+ 19c:	88 55       	subi	r24, 0x58	; 88
+ 19e:	97 4b       	sbci	r25, 0xB7	; 183
+ 1a0:	90 93 89 00 	sts	0x0089, r25
+ 1a4:	80 93 88 00 	sts	0x0088, r24
+ 1a8:	08 95       	ret
 
-
-void impl_speed_direction(void) {
+000001aa <direction_controller>:
 	
-	if (speed_cm == SPI_SPEED_NEUTRAL) {
- 186:	80 91 02 01 	lds	r24, 0x0102
- 18a:	81 11       	cpse	r24, r1
- 18c:	09 c0       	rjmp	.+18     	; 0x1a0 <impl_speed_direction+0x1a>
-		OCR1A = NEUTRAL;
- 18e:	80 91 0d 01 	lds	r24, 0x010D
- 192:	90 91 0e 01 	lds	r25, 0x010E
- 196:	90 93 89 00 	sts	0x0089, r25
- 19a:	80 93 88 00 	sts	0x0088, r24
- 19e:	23 c0       	rjmp	.+70     	; 0x1e6 <impl_speed_direction+0x60>
-	} else if (speed_cm == SPI_SPEED_LOW) {
- 1a0:	80 31       	cpi	r24, 0x10	; 16
- 1a2:	49 f4       	brne	.+18     	; 0x1b6 <impl_speed_direction+0x30>
-		OCR1A = SPEED_LOW;
- 1a4:	80 91 05 01 	lds	r24, 0x0105
- 1a8:	90 91 06 01 	lds	r25, 0x0106
- 1ac:	90 93 89 00 	sts	0x0089, r25
- 1b0:	80 93 88 00 	sts	0x0088, r24
- 1b4:	18 c0       	rjmp	.+48     	; 0x1e6 <impl_speed_direction+0x60>
-	} else if (speed_cm == SPI_SPEED_MIDDLE) {
- 1b6:	80 32       	cpi	r24, 0x20	; 32
- 1b8:	49 f4       	brne	.+18     	; 0x1cc <impl_speed_direction+0x46>
-		OCR1A = SPEED_MIDDLE;
- 1ba:	80 91 0b 01 	lds	r24, 0x010B
- 1be:	90 91 0c 01 	lds	r25, 0x010C
- 1c2:	90 93 89 00 	sts	0x0089, r25
- 1c6:	80 93 88 00 	sts	0x0088, r24
- 1ca:	0d c0       	rjmp	.+26     	; 0x1e6 <impl_speed_direction+0x60>
-	}else if (speed_cm == SPI_BACK) {
- 1cc:	80 33       	cpi	r24, 0x30	; 48
- 1ce:	49 f4       	brne	.+18     	; 0x1e2 <impl_speed_direction+0x5c>
-		OCR1A = SPEED_BACK;
- 1d0:	80 91 09 01 	lds	r24, 0x0109
- 1d4:	90 91 0a 01 	lds	r25, 0x010A
- 1d8:	90 93 89 00 	sts	0x0089, r25
- 1dc:	80 93 88 00 	sts	0x0088, r24
- 1e0:	02 c0       	rjmp	.+4      	; 0x1e6 <impl_speed_direction+0x60>
-	}else {
-		PORTA = 0xAE;
- 1e2:	8e ea       	ldi	r24, 0xAE	; 174
- 1e4:	82 b9       	out	0x02, r24	; 2
-	}
-	
-	if (angle_cm == SPI_ANGLE_NEUTRAL) {
- 1e6:	80 91 01 01 	lds	r24, 0x0101
- 1ea:	81 11       	cpse	r24, r1
- 1ec:	09 c0       	rjmp	.+18     	; 0x200 <impl_speed_direction+0x7a>
-		OCR1B = NEUTRAL;
- 1ee:	80 91 0d 01 	lds	r24, 0x010D
- 1f2:	90 91 0e 01 	lds	r25, 0x010E
- 1f6:	90 93 8b 00 	sts	0x008B, r25
- 1fa:	80 93 8a 00 	sts	0x008A, r24
- 1fe:	08 95       	ret
-	} else if (angle_cm ==  SPI_ANGLE_LEFT) {
- 200:	80 31       	cpi	r24, 0x10	; 16
- 202:	49 f4       	brne	.+18     	; 0x216 <impl_speed_direction+0x90>
-		OCR1B = LEFT;
- 204:	80 91 07 01 	lds	r24, 0x0107
- 208:	90 91 08 01 	lds	r25, 0x0108
- 20c:	90 93 8b 00 	sts	0x008B, r25
- 210:	80 93 8a 00 	sts	0x008A, r24
- 214:	08 95       	ret
-	} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
- 216:	80 32       	cpi	r24, 0x20	; 32
- 218:	49 f4       	brne	.+18     	; 0x22c <impl_speed_direction+0xa6>
-		OCR1B = RIGHT;
- 21a:	80 91 03 01 	lds	r24, 0x0103
- 21e:	90 91 04 01 	lds	r25, 0x0104
- 222:	90 93 8b 00 	sts	0x008B, r25
- 226:	80 93 8a 00 	sts	0x008A, r24
- 22a:	08 95       	ret
-	} else {
-		PORTA = 0xEA;
- 22c:	8a ee       	ldi	r24, 0xEA	; 234
- 22e:	82 b9       	out	0x02, r24	; 2
- 230:	08 95       	ret
+void direction_controller(signed char direction ) {
+		// Right directions between 0-127 and left directions between 0-(-127), OCR1B = 18600(the compare value with the counter ICR1) give neutral direction.
+		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
+		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
+		OCR1B = 18600 - (direction * 3);
+ 1aa:	99 27       	eor	r25, r25
+ 1ac:	87 fd       	sbrc	r24, 7
+ 1ae:	90 95       	com	r25
+ 1b0:	9c 01       	movw	r18, r24
+ 1b2:	22 0f       	add	r18, r18
+ 1b4:	33 1f       	adc	r19, r19
+ 1b6:	82 0f       	add	r24, r18
+ 1b8:	93 1f       	adc	r25, r19
+ 1ba:	91 95       	neg	r25
+ 1bc:	81 95       	neg	r24
+ 1be:	91 09       	sbc	r25, r1
+ 1c0:	88 55       	subi	r24, 0x58	; 88
+ 1c2:	97 4b       	sbci	r25, 0xB7	; 183
+ 1c4:	90 93 8b 00 	sts	0x008B, r25
+ 1c8:	80 93 8a 00 	sts	0x008A, r24
+ 1cc:	08 95       	ret
 
-00000232 <main>:
+000001ce <main>:
 
 
 int main(void) {
 
 
 	SPI_SlaveInit();
- 232:	4a df       	rcall	.-364    	; 0xc8 <SPI_SlaveInit>
+ 1ce:	7c df       	rcall	.-264    	; 0xc8 <SPI_SlaveInit>
 	PWM_init();
- 234:	64 df       	rcall	.-312    	; 0xfe <PWM_init>
+ 1d0:	96 df       	rcall	.-212    	; 0xfe <PWM_init>
 
 	return check;
 }
 
 void init(void) {
 	DDRA = 0xFF;
- 236:	8f ef       	ldi	r24, 0xFF	; 255
- 238:	81 b9       	out	0x01, r24	; 1
+ 1d2:	8f ef       	ldi	r24, 0xFF	; 255
+ 1d4:	81 b9       	out	0x01, r24	; 1
 
 	SPI_SlaveInit();
 	PWM_init();
 	init();
 
 	PORTA = 0xBB; 	
- 23a:	8b eb       	ldi	r24, 0xBB	; 187
- 23c:	82 b9       	out	0x02, r24	; 2
+ 1d6:	8b eb       	ldi	r24, 0xBB	; 187
+ 1d8:	82 b9       	out	0x02, r24	; 2
 	uint8_t spi_read = 0;
 	uint8_t cntr = 0;
 	
 
 	
 	OCR1A = SPEED_BACK;
- 23e:	80 91 09 01 	lds	r24, 0x0109
- 242:	90 91 0a 01 	lds	r25, 0x010A
- 246:	90 93 89 00 	sts	0x0089, r25
- 24a:	80 93 88 00 	sts	0x0088, r24
+ 1da:	80 91 09 01 	lds	r24, 0x0109
+ 1de:	90 91 0a 01 	lds	r25, 0x010A
+ 1e2:	90 93 89 00 	sts	0x0089, r25
+ 1e6:	80 93 88 00 	sts	0x0088, r24
 	OCR1B = NEUTRAL;
- 24e:	80 91 0d 01 	lds	r24, 0x010D
- 252:	90 91 0e 01 	lds	r25, 0x010E
- 256:	90 93 8b 00 	sts	0x008B, r25
- 25a:	80 93 8a 00 	sts	0x008A, r24
+ 1ea:	80 91 0d 01 	lds	r24, 0x010D
+ 1ee:	90 91 0e 01 	lds	r25, 0x010E
+ 1f2:	90 93 8b 00 	sts	0x008B, r25
+ 1f6:	80 93 8a 00 	sts	0x008A, r24
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 25e:	90 e0       	ldi	r25, 0x00	; 0
+ 1fa:	90 e0       	ldi	r25, 0x00	; 0
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
 			spi_rdy = (spi_read == SPI_START);
- 260:	c1 e0       	ldi	r28, 0x01	; 1
- 262:	08 c0       	rjmp	.+16     	; 0x274 <main+0x42>
+ 1fc:	c1 e0       	ldi	r28, 0x01	; 1
+ 1fe:	08 c0       	rjmp	.+16     	; 0x210 <main+0x42>
 		
 		spi_rdy = 0;
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
- 264:	8e ee       	ldi	r24, 0xEE	; 238
- 266:	34 df       	rcall	.-408    	; 0xd0 <SPI_tranceive>
+ 200:	8e ee       	ldi	r24, 0xEE	; 238
+ 202:	66 df       	rcall	.-308    	; 0xd0 <SPI_tranceive>
 			spi_rdy = (spi_read == SPI_START);
- 268:	9c 2f       	mov	r25, r28
- 26a:	8a 3a       	cpi	r24, 0xAA	; 170
- 26c:	19 f0       	breq	.+6      	; 0x274 <main+0x42>
- 26e:	90 e0       	ldi	r25, 0x00	; 0
- 270:	01 c0       	rjmp	.+2      	; 0x274 <main+0x42>
+ 204:	9c 2f       	mov	r25, r28
+ 206:	8a 3a       	cpi	r24, 0xAA	; 170
+ 208:	19 f0       	breq	.+6      	; 0x210 <main+0x42>
+ 20a:	90 e0       	ldi	r25, 0x00	; 0
+ 20c:	01 c0       	rjmp	.+2      	; 0x210 <main+0x42>
 	OCR1A = SPEED_BACK;
 	OCR1B = NEUTRAL;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 272:	90 e0       	ldi	r25, 0x00	; 0
+ 20e:	90 e0       	ldi	r25, 0x00	; 0
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
- 274:	99 23       	and	r25, r25
- 276:	b1 f3       	breq	.-20     	; 0x264 <main+0x32>
+ 210:	99 23       	and	r25, r25
+ 212:	b1 f3       	breq	.-20     	; 0x200 <main+0x32>
 			
 			cntr++;
 		}
 		cntr = 0;
 		
 		read_data_send_check();
- 278:	31 df       	rcall	.-414    	; 0xdc <read_data_send_check>
+ 214:	63 df       	rcall	.-314    	; 0xdc <read_data_send_check>
 		
 		/* Check if communication was a success */
 		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
- 27a:	80 e0       	ldi	r24, 0x00	; 0
- 27c:	29 df       	rcall	.-430    	; 0xd0 <SPI_tranceive>
+ 216:	80 e0       	ldi	r24, 0x00	; 0
+ 218:	5b df       	rcall	.-330    	; 0xd0 <SPI_tranceive>
 		
 		if (spi_success) {
- 27e:	86 36       	cpi	r24, 0x66	; 102
- 280:	c1 f7       	brne	.-16     	; 0x272 <main+0x40>
-			impl_speed_direction();
- 282:	81 df       	rcall	.-254    	; 0x186 <impl_speed_direction>
+ 21a:	86 36       	cpi	r24, 0x66	; 102
+ 21c:	c1 f7       	brne	.-16     	; 0x20e <main+0x40>
+			//impl_speed_direction();
+			speed_controller(speed_cm);
+ 21e:	80 91 02 01 	lds	r24, 0x0102
+ 222:	b1 df       	rcall	.-158    	; 0x186 <speed_controller>
+			direction_controller(angle_cm);
+ 224:	80 91 01 01 	lds	r24, 0x0101
+ 228:	c0 df       	rcall	.-128    	; 0x1aa <direction_controller>
 	OCR1A = SPEED_BACK;
 	OCR1B = NEUTRAL;
 	
 	while(1) {
 		
 		spi_rdy = 0;
- 284:	90 e0       	ldi	r25, 0x00	; 0
- 286:	f6 cf       	rjmp	.-20     	; 0x274 <main+0x42>
+ 22a:	90 e0       	ldi	r25, 0x00	; 0
+ 22c:	f1 cf       	rjmp	.-30     	; 0x210 <main+0x42>
 
-00000288 <_exit>:
- 288:	f8 94       	cli
+0000022e <_exit>:
+ 22e:	f8 94       	cli
 
-0000028a <__stop_program>:
- 28a:	ff cf       	rjmp	.-2      	; 0x28a <__stop_program>
+00000230 <__stop_program>:
+ 230:	ff cf       	rjmp	.-2      	; 0x230 <__stop_program>

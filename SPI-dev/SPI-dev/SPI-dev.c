@@ -207,6 +207,26 @@ void impl_speed_direction(void) {
 }
 
 
+void speed_controller(signed char  speed) {
+		// speeds choses between 0-127 or reversed speeds between 0-(-127),
+		// OCR1A = 18600(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
+		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
+		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
+		OCR1A = 18600 - (speed * 3);
+		
+	}
+	
+	
+	
+void direction_controller(signed char direction ) {
+		// Right directions between 0-127 and left directions between 0-(-127), OCR1B = 18600(the compare value with the counter ICR1) give neutral direction.
+		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
+		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
+		OCR1B = 18600 - (direction * 3);
+		
+	}
+
+
 
 int main(void) {
 
@@ -247,10 +267,11 @@ int main(void) {
 		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
 		
 		if (spi_success) {
-			impl_speed_direction();
+			//impl_speed_direction();
+			speed_controller(speed_cm);
+			direction_controller(angle_cm);
+			
 		}
-	
-		
 	}
 }
 
