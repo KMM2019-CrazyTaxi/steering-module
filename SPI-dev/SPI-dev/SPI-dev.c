@@ -26,7 +26,7 @@
 #define SPI_ERROR 0x55
 #define SPI_ACK 0xEE
 
-/* SPI hardoded speed för PWM*/
+/* SPI hardcoded speed för PWM*/
 #define SPI_SPEED_NEUTRAL 0x00
 #define SPI_SPEED_LOW 0x10
 #define SPI_SPEED_MIDDLE 0x20
@@ -42,6 +42,15 @@ int8_t speed_cm = 0x00;
 int8_t angle_cm = 0x11;
 
 uint8_t check_byte = 0x22;
+
+unsigned int NEUTRAL; // 1.43ms
+unsigned int LEFT ;
+unsigned int RIGHT;
+
+unsigned int SPEED_LOW;
+unsigned int SPEED_MIDDLE;
+unsigned int SPEED_BACK; //1.38 ms
+
 
 /* Prototypes */
 uint8_t calc_check_byte(uint8_t *buffer, uint8_t size);
@@ -108,6 +117,7 @@ void SPI_SlaveReceiveBytes(uint8_t *buffer, uint8_t size) {
 	}
 }
 
+
 void count_port_a(void) {
 	while (1) {
 		for (uint8_t a = 0; a < 0xFF; ++a) {
@@ -122,12 +132,14 @@ void count_port_a(void) {
 	}
 }
 
+
 void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
 	for (uint8_t i = 0; i < size; i++) {
 		PORTA = buffer[i];
 		_delay_ms(1000);
 	}
 }
+
 
 /*
  * Perform communication with the central module in accordance to the protocol. 
@@ -149,7 +161,6 @@ void read_data_send_check(void) {
 }
 
 
-
 void PWM_init() {
 	DDRD |= 0xFF;
 	
@@ -157,7 +168,45 @@ void PWM_init() {
 	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
 	ICR1 = 19999 ;
 	
+	
+	NEUTRAL = ICR1 -1400; // 1.43ms
+	LEFT = ICR1 - 1210;
+	RIGHT= ICR1 -1650;
+
+	SPEED_LOW = ICR1 - 1460;
+	SPEED_MIDDLE = ICR1 - 1475;
+	SPEED_BACK = ICR1 - 1350; //1.38 ms
+	
 }
+
+
+void impl_speed_direction(void) {
+	
+	if (speed_cm == SPI_SPEED_NEUTRAL) {
+		OCR1A = NEUTRAL;
+	} else if (speed_cm == SPI_SPEED_LOW) {
+		OCR1A = SPEED_LOW;
+	} else if (speed_cm == SPI_SPEED_MIDDLE) {
+		OCR1A = SPEED_MIDDLE;
+	}else if (speed_cm == SPI_BACK) {
+		OCR1A = SPEED_BACK;
+	}else {
+		PORTA = 0xAE;
+	}
+	
+	if (angle_cm == SPI_ANGLE_NEUTRAL) {
+		OCR1B = NEUTRAL;
+	} else if (angle_cm ==  SPI_ANGLE_LEFT) {
+		OCR1B = LEFT;
+	} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
+		OCR1B = RIGHT;
+	} else {
+		PORTA = 0xEA;
+	}
+
+}
+
+
 
 int main(void) {
 
@@ -175,54 +224,14 @@ int main(void) {
 	uint8_t cntr = 0;
 	
 
-	unsigned int NEUTRAL = ICR1 -1400; // 1.43ms
-	unsigned int LEFT = ICR1 - 1210;
-	unsigned int RIGHT= ICR1 -1650;
-	
-	unsigned int SPEED_LOW = ICR1 - 1460;
-	unsigned int SPEED_MIDDLE = ICR1 - 1475;
-	unsigned int SPEED_BACK = ICR1 - 1350; //1.38 ms
-	
-	void impl_speed_direction(void) {
-		
-		/* Check if communication was a success */
-		spi_success = SPI_tranceive(SPI_NAN);
-		
-		if (spi_success) {
-			if (speed_cm == SPI_SPEED_NEUTRAL) {
-				OCR1A = NEUTRAL;
-				} else if (speed_cm == SPI_SPEED_LOW) {
-				OCR1A = SPEED_LOW;
-				} else if (speed_cm == SPI_SPEED_MIDDLE) {
-				OCR1A = SPEED_MIDDLE;
-				}else if (speed_cm == SPI_BACK) {
-				OCR1A = SPEED_BACK;
-				}else {
-				PORTA = 0xAE;
-			}
-			
-			if (angle_cm == SPI_ANGLE_NEUTRAL) {
-				OCR1B = NEUTRAL;
-				} else if (angle_cm ==  SPI_ANGLE_LEFT) {
-				OCR1B = LEFT;
-				} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
-				OCR1B = RIGHT;
-				} else {
-				PORTA = 0xEA;
-			}
-			
-		}
-
-	}
-
 	
 	OCR1A = SPEED_BACK;
 	OCR1B = NEUTRAL;
-	//OCR1A = SPEED_BACK;
 	
 	while(1) {
 		
 		spi_rdy = 0;
+		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
@@ -233,8 +242,14 @@ int main(void) {
 		cntr = 0;
 		
 		read_data_send_check();
-		impl_speed_direction();
 		
+		/* Check if communication was a success */
+		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
+		
+		if (spi_success) {
+			impl_speed_direction();
+		}
+	
 		
 	}
 }
