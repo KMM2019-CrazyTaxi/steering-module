@@ -212,7 +212,10 @@ void speed_controller(signed char  speed) {
 		// OCR1A = 18600(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
 		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
 		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
-		OCR1A = 18600 - (speed * 3);
+		
+		unsigned int counter_limit_const = 18600; 
+		unsigned int acceleration_rate = 3;
+		OCR1A = counter_limit_const - (speed * acceleration_rate );
 		
 	}
 	
@@ -222,15 +225,32 @@ void direction_controller(signed char direction ) {
 		// Right directions between 0-127 and left directions between 0-(-127), OCR1B = 18600(the compare value with the counter ICR1) give neutral direction.
 		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
 		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
-		OCR1B = 18600 - (direction * 3);
+		unsigned int counter_limit_const = 18600;
+		unsigned int acceleration_rate = 3;
+		OCR1B = counter_limit_const - (direction * acceleration_rate);
 		
 	}
 
 
 
+ISR(INT2_vect)
+{
+	
+	//Stop button.
+	OCR1A = NEUTRAL;
+	OCR1B = NEUTRAL;
+	while(1){
+		
+	}
+}
+
 int main(void) {
 
-
+	// Stop button configurations.
+	EICRA |= 1<<ISC20 | 1<<ISC21;
+	EIMSK |= 1<<INT2;
+	EIFR |= 1<<INTF2;
+	sei();               // Enable global interrupts.
 	SPI_SlaveInit();
 	PWM_init();
 	init();
@@ -245,7 +265,7 @@ int main(void) {
 	
 
 	
-	OCR1A = SPEED_BACK;
+	OCR1A = NEUTRAL;
 	OCR1B = NEUTRAL;
 	
 	while(1) {
