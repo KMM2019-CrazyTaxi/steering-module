@@ -3,29 +3,29 @@ SPI-dev.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  0000026e  00000302  2**0
+  0 .data         00000002  00800100  0000025e  000002f2  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000026e  00000000  00000000  00000094  2**1
+  1 .text         0000025e  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000000d  00800102  00800102  00000304  2**0
+  2 .bss          0000000d  00800102  00800102  000002f4  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000304  2**0
+  3 .comment      00000030  00000000  00000000  000002f4  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000090  00000000  00000000  00000334  2**0
+  4 .debug_aranges 00000090  00000000  00000000  00000324  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000561  00000000  00000000  000003c4  2**0
+  5 .debug_info   0000054d  00000000  00000000  000003b4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000215  00000000  00000000  00000925  2**0
+  6 .debug_abbrev 00000215  00000000  00000000  00000901  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000458  00000000  00000000  00000b3a  2**0
+  7 .debug_line   0000043a  00000000  00000000  00000b16  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000130  00000000  00000000  00000f94  2**2
+  8 .debug_frame  00000130  00000000  00000000  00000f50  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000002f5  00000000  00000000  000010c4  2**0
+  9 .debug_str    000002f4  00000000  00000000  00001080  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000040c  00000000  00000000  000013b9  2**0
+ 10 .debug_loc    000003e1  00000000  00000000  00001374  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000080  00000000  00000000  000017c5  2**0
+ 11 .debug_ranges 00000080  00000000  00000000  00001755  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -114,7 +114,7 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	ee e6       	ldi	r30, 0x6E	; 110
+  9e:	ee e5       	ldi	r30, 0x5E	; 94
   a0:	f2 e0       	ldi	r31, 0x02	; 2
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
@@ -139,7 +139,7 @@ Disassembly of section .text:
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
   c2:	9b d0       	rcall	.+310    	; 0x1fa <main>
-  c4:	d2 c0       	rjmp	.+420    	; 0x26a <_exit>
+  c4:	ca c0       	rjmp	.+404    	; 0x25a <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
@@ -186,12 +186,12 @@ Disassembly of section .text:
  104:	e0 e8       	ldi	r30, 0x80	; 128
  106:	f0 e0       	ldi	r31, 0x00	; 0
  108:	80 81       	ld	r24, Z
- 10a:	8a 6f       	ori	r24, 0xFA	; 250
+ 10a:	82 6f       	ori	r24, 0xF2	; 242
  10c:	80 83       	st	Z, r24
  10e:	e1 e8       	ldi	r30, 0x81	; 129
  110:	f0 e0       	ldi	r31, 0x00	; 0
  112:	80 81       	ld	r24, Z
- 114:	8a 61       	ori	r24, 0x1A	; 26
+ 114:	89 61       	ori	r24, 0x19	; 25
  116:	80 83       	st	Z, r24
  118:	e6 e8       	ldi	r30, 0x86	; 134
  11a:	f0 e0       	ldi	r31, 0x00	; 0
@@ -349,9 +349,9 @@ void init(void) {
 	PORTA = 0xBB; 	
  212:	8b eb       	ldi	r24, 0xBB	; 187
  214:	82 b9       	out	0x02, r24	; 2
-	uint8_t spi_read = 0;
-	uint8_t cntr = 0;
+	uint8_t spi_success = 0;
 	
+	uint8_t spi_read = 0;	
 
 	
 	OCR1A = NEUTRAL;
@@ -366,76 +366,52 @@ void init(void) {
  232:	80 93 8a 00 	sts	0x008A, r24
 	
 	while(1) {
-		
-		spi_rdy = 0;
- 236:	90 e0       	ldi	r25, 0x00	; 0
-		
-		/* SPI wait for start byte from central module */
-		while (spi_rdy == 0) {
-			spi_read = SPI_tranceive(SPI_ACK);
-			spi_rdy = (spi_read == SPI_START);
- 238:	c1 e0       	ldi	r28, 0x01	; 1
- 23a:	08 c0       	rjmp	.+16     	; 0x24c <main+0x52>
+		PORTA = 0xFF;
+ 236:	cf ef       	ldi	r28, 0xFF	; 255
+ 238:	c2 b9       	out	0x02, r28	; 2
 		
 		spi_rdy = 0;
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
- 23c:	8e ee       	ldi	r24, 0xEE	; 238
- 23e:	48 df       	rcall	.-368    	; 0xd0 <SPI_tranceive>
-			spi_rdy = (spi_read == SPI_START);
- 240:	9c 2f       	mov	r25, r28
- 242:	8a 3a       	cpi	r24, 0xAA	; 170
- 244:	19 f0       	breq	.+6      	; 0x24c <main+0x52>
- 246:	90 e0       	ldi	r25, 0x00	; 0
- 248:	01 c0       	rjmp	.+2      	; 0x24c <main+0x52>
-	OCR1A = NEUTRAL;
-	OCR1B = NEUTRAL;
-	
-	while(1) {
+ 23a:	8e ee       	ldi	r24, 0xEE	; 238
+ 23c:	49 df       	rcall	.-366    	; 0xd0 <SPI_tranceive>
+		PORTA = 0xFF;
 		
 		spi_rdy = 0;
- 24a:	90 e0       	ldi	r25, 0x00	; 0
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
- 24c:	99 23       	and	r25, r25
- 24e:	b1 f3       	breq	.-20     	; 0x23c <main+0x42>
+ 23e:	8a 3a       	cpi	r24, 0xAA	; 170
+ 240:	e1 f7       	brne	.-8      	; 0x23a <main+0x40>
+			spi_read = SPI_tranceive(SPI_ACK);
+			spi_rdy = (spi_read == SPI_START);
 			
-			cntr++;
 		}
-		cntr = 0;
-		
+
 		read_data_send_check();
- 250:	45 df       	rcall	.-374    	; 0xdc <read_data_send_check>
+ 242:	4c df       	rcall	.-360    	; 0xdc <read_data_send_check>
 		
 		/* Check if communication was a success */
 		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
- 252:	80 e0       	ldi	r24, 0x00	; 0
- 254:	3d df       	rcall	.-390    	; 0xd0 <SPI_tranceive>
+ 244:	80 e0       	ldi	r24, 0x00	; 0
+ 246:	44 df       	rcall	.-376    	; 0xd0 <SPI_tranceive>
 		
 		if (spi_success) {
- 256:	86 36       	cpi	r24, 0x66	; 102
- 258:	c1 f7       	brne	.-16     	; 0x24a <main+0x50>
+ 248:	86 36       	cpi	r24, 0x66	; 102
+ 24a:	b1 f7       	brne	.-20     	; 0x238 <main+0x3e>
 			//impl_speed_direction();
 			speed_controller(speed_cm);
- 25a:	80 91 02 01 	lds	r24, 0x0102
- 25e:	93 df       	rcall	.-218    	; 0x186 <speed_controller>
+ 24c:	80 91 02 01 	lds	r24, 0x0102
+ 250:	9a df       	rcall	.-204    	; 0x186 <speed_controller>
 			direction_controller(angle_cm);
- 260:	80 91 01 01 	lds	r24, 0x0101
- 264:	a2 df       	rcall	.-188    	; 0x1aa <direction_controller>
-	OCR1A = NEUTRAL;
-	OCR1B = NEUTRAL;
-	
-	while(1) {
-		
-		spi_rdy = 0;
- 266:	90 e0       	ldi	r25, 0x00	; 0
- 268:	f1 cf       	rjmp	.-30     	; 0x24c <main+0x52>
+ 252:	80 91 01 01 	lds	r24, 0x0101
+ 256:	a9 df       	rcall	.-174    	; 0x1aa <direction_controller>
+ 258:	ef cf       	rjmp	.-34     	; 0x238 <main+0x3e>
 
-0000026a <_exit>:
- 26a:	f8 94       	cli
+0000025a <_exit>:
+ 25a:	f8 94       	cli
 
-0000026c <__stop_program>:
- 26c:	ff cf       	rjmp	.-2      	; 0x26c <__stop_program>
+0000025c <__stop_program>:
+ 25c:	ff cf       	rjmp	.-2      	; 0x25c <__stop_program>

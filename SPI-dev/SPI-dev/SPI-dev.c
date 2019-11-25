@@ -52,26 +52,6 @@ unsigned int SPEED_MIDDLE;
 unsigned int SPEED_BACK; //1.38 ms
 
 
-/* Prototypes */
-uint8_t calc_check_byte(uint8_t *buffer, uint8_t size);
-
-/* 
- * The steering module SPI interrupt routine.
- */
-/*
-ISR(SPI_STC_vect) {
-	uint8_t spi_buffer[6];
-	
-	SPI_SlaveReceiveBytes(spi_buffer, PROTOCOL_READ_BYTES);
-	
-	check_byte = calc_check_byte(spi_buffer, PROTOCOL_READ_BYTES);
-	
-	speed_cm = (int8_t) spi_buffer[1];
-	angle_cm = (int8_t) spi_buffer[2];
-	
-}
-*/
-
 uint8_t calc_check_byte(uint8_t *buffer, uint8_t size) {
 	uint8_t check = buffer[0];
 	for (uint8_t i = 1; i < size; i++) {
@@ -164,12 +144,12 @@ void read_data_send_check(void) {
 void PWM_init() {
 	DDRD |= 0xFF;
 	
-	TCCR1A |=  (1<<WGM11) | (1<<WGM12) | (1<<WGM13) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
-	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
+	TCCR1A |=  (1<<WGM11) | (1<<COM1B0) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1A1);
+	TCCR1B |=  (1<<WGM12) | (1<<WGM13) | (1<<CS10);
 	ICR1 = 19999 ;
 	
 	
-	NEUTRAL = ICR1 -1400; // 1.43ms
+	NEUTRAL = ICR1 -1400; // 1.43mss
 	LEFT = ICR1 - 1210;
 	RIGHT= ICR1 -1650;
 
@@ -260,15 +240,14 @@ int main(void) {
 	uint8_t spi_rdy = 0;
 	uint8_t spi_success = 0;
 	
-	uint8_t spi_read = 0;
-	uint8_t cntr = 0;
-	
+	uint8_t spi_read = 0;	
 
 	
 	OCR1A = NEUTRAL;
 	OCR1B = NEUTRAL;
 	
 	while(1) {
+		PORTA = 0xFF;
 		
 		spi_rdy = 0;
 		
@@ -277,10 +256,8 @@ int main(void) {
 			spi_read = SPI_tranceive(SPI_ACK);
 			spi_rdy = (spi_read == SPI_START);
 			
-			cntr++;
 		}
-		cntr = 0;
-		
+
 		read_data_send_check();
 		
 		/* Check if communication was a success */
