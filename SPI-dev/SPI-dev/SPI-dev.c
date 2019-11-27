@@ -37,13 +37,15 @@
 #define SPI_ANGLE_RIGHT 0x20
 
 
+
 /* Global variables */
 int8_t speed_cm = 0x00;
 int8_t angle_cm = 0x11;
 
 uint8_t check_byte = 0x22;
 
-unsigned int NEUTRAL; // 1.43ms
+unsigned int NEUTRAL; 
+unsigned int NEUTRAL_direction; 
 unsigned int LEFT ;
 unsigned int RIGHT;
 
@@ -51,6 +53,9 @@ unsigned int SPEED_LOW;
 unsigned int SPEED_MIDDLE;
 unsigned int SPEED_BACK; //1.38 ms
 
+unsigned int counter_limit_const ;
+unsigned int acceleration_rate_speed ;
+unsigned int acceleration_rate_direction;
 
 /* Prototypes */
 uint8_t calc_check_byte(uint8_t *buffer, uint8_t size);
@@ -163,20 +168,16 @@ void read_data_send_check(void) {
 
 void PWM_init() {
 	DDRD |= 0xFF;
-	
-	TCCR1A |=  (1<<WGM11) | (1<<WGM12) | (1<<WGM13) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
-	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
-	ICR1 = 19999 ;
-	
-	
-	NEUTRAL = ICR1 -1400; // 1.43ms
-	LEFT = ICR1 - 1210;
-	RIGHT= ICR1 -1650;
+	TCCR1A |=   (1<<WGM11) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
+	TCCR1B |=   (1<<WGM12) | (1<<WGM13) | (1<<CS10);
+	ICR1 = F_CPU/50; //19999 ; // 50 hz needed for the motor and controlling servo.
 
-	SPEED_LOW = ICR1 - 1460;
-	SPEED_MIDDLE = ICR1 - 1475;
-	SPEED_BACK = ICR1 - 1350; //1.38 ms
 	
+	NEUTRAL = ICR1-1490 ; // pulse width 1.5ms
+	acceleration_rate_speed = 4;
+	acceleration_rate_direction = 4;
+	NEUTRAL_direction = ICR1-1430; // pulse width 1,43 
+
 }
 
 
@@ -209,25 +210,23 @@ void impl_speed_direction(void) {
 
 void speed_controller(signed char  speed) {
 		// speeds choses between 0-127 or reversed speeds between 0-(-127),
-		// OCR1A = 18600(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
+		// OCR1A = 18509(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
 		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
 		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
 		
-		unsigned int counter_limit_const = 18600; 
-		unsigned int acceleration_rate = 3;
-		OCR1A = counter_limit_const - (speed * acceleration_rate );
+		OCR1A = NEUTRAL - (speed * acceleration_rate_speed);
 		
 	}
 	
 	
 	
 void direction_controller(signed char direction ) {
-		// Right directions between 0-127 and left directions between 0-(-127), OCR1B = 18600(the compare value with the counter ICR1) give neutral direction.
+		// Right directions between 0-127 and left directions between 0-(-127),
+		// OCR1B = 18509(the compare value with the counter ICR1 : counter_limit_const counter_limit_const) give neutral direction.
 		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
 		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
-		unsigned int counter_limit_const = 18600;
-		unsigned int acceleration_rate = 3;
-		OCR1B = counter_limit_const - (direction * acceleration_rate);
+
+		OCR1B = NEUTRAL_direction - (direction * acceleration_rate_direction);
 		
 	}
 
@@ -238,7 +237,7 @@ ISR(INT2_vect)
 	
 	//Stop button.
 	OCR1A = NEUTRAL;
-	OCR1B = NEUTRAL;
+	OCR1B = NEUTRAL_direction;
 	while(1){
 		
 	}
@@ -266,7 +265,7 @@ int main(void) {
 
 	
 	OCR1A = NEUTRAL;
-	OCR1B = NEUTRAL;
+	OCR1B = ICR1 -1400;
 	
 	while(1) {
 		

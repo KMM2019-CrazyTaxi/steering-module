@@ -12,9 +12,16 @@ Common symbol       size              file
 
 RIGHT               0x2               SPI-dev.o
 SPEED_LOW           0x2               SPI-dev.o
+NEUTRAL_direction   0x2               SPI-dev.o
+acceleration_rate_direction
+                    0x2               SPI-dev.o
 LEFT                0x2               SPI-dev.o
 SPEED_BACK          0x2               SPI-dev.o
 SPEED_MIDDLE        0x2               SPI-dev.o
+acceleration_rate_speed
+                    0x2               SPI-dev.o
+counter_limit_const
+                    0x2               SPI-dev.o
 NEUTRAL             0x2               SPI-dev.o
 
 Discarded input sections
@@ -202,7 +209,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x26e
+.text           0x00000000      0x252
  *(.vectors)
  .vectors       0x00000000       0x8c c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtm1284p.o
                 0x00000000                __vector_default
@@ -305,24 +312,24 @@ END GROUP
                 0x000000dc       0x22 SPI-dev.o
                 0x000000dc                read_data_send_check
  .text.PWM_init
-                0x000000fe       0x88 SPI-dev.o
+                0x000000fe       0x5c SPI-dev.o
                 0x000000fe                PWM_init
  .text.speed_controller
-                0x00000186       0x24 SPI-dev.o
-                0x00000186                speed_controller
+                0x0000015a       0x2a SPI-dev.o
+                0x0000015a                speed_controller
  .text.direction_controller
-                0x000001aa       0x24 SPI-dev.o
-                0x000001aa                direction_controller
+                0x00000184       0x2a SPI-dev.o
+                0x00000184                direction_controller
  .text.__vector_3
-                0x000001ce       0x2c SPI-dev.o
-                0x000001ce                __vector_3
- .text.main     0x000001fa       0x70 SPI-dev.o
-                0x000001fa                main
-                0x0000026a                . = ALIGN (0x2)
+                0x000001ae       0x2c SPI-dev.o
+                0x000001ae                __vector_3
+ .text.main     0x000001da       0x74 SPI-dev.o
+                0x000001da                main
+                0x0000024e                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000026a        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
-                0x0000026a                _exit
-                0x0000026a                exit
+ .fini9         0x0000024e        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
+                0x0000024e                _exit
+                0x0000024e                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -341,11 +348,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000026a        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
+ .fini0         0x0000024e        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000026e                _etext = .
+                0x00000252                _etext = .
 
-.data           0x00800100        0x2 load address 0x0000026e
+.data           0x00800100        0x2 load address 0x00000252
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -362,30 +369,34 @@ END GROUP
                 0x00800102                _edata = .
                 0x00800102                PROVIDE (__data_end, .)
 
-.bss            0x00800102        0xd
+.bss            0x00800102       0x15
                 0x00800102                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  .bss.speed_cm  0x00800102        0x1 SPI-dev.o
                 0x00800102                speed_cm
  *(COMMON)
- COMMON         0x00800103        0xc SPI-dev.o
+ COMMON         0x00800103       0x14 SPI-dev.o
                 0x00800103                RIGHT
                 0x00800105                SPEED_LOW
-                0x00800107                LEFT
-                0x00800109                SPEED_BACK
-                0x0080010b                SPEED_MIDDLE
-                0x0080010d                NEUTRAL
-                0x0080010f                PROVIDE (__bss_end, .)
-                0x0000026e                __data_load_start = LOADADDR (.data)
-                0x00000270                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00800107                NEUTRAL_direction
+                0x00800109                acceleration_rate_direction
+                0x0080010b                LEFT
+                0x0080010d                SPEED_BACK
+                0x0080010f                SPEED_MIDDLE
+                0x00800111                acceleration_rate_speed
+                0x00800113                counter_limit_const
+                0x00800115                NEUTRAL
+                0x00800117                PROVIDE (__bss_end, .)
+                0x00000252                __data_load_start = LOADADDR (.data)
+                0x00000254                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x0080010f        0x0
-                0x0080010f                PROVIDE (__noinit_start, .)
+.noinit         0x00800117        0x0
+                0x00800117                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x0080010f                PROVIDE (__noinit_end, .)
-                0x0080010f                _end = .
-                0x0080010f                PROVIDE (__heap_start, .)
+                0x00800117                PROVIDE (__noinit_end, .)
+                0x00800117                _end = .
+                0x00800117                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -452,30 +463,30 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x561
+.debug_info     0x00000000      0x576
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0x561 SPI-dev.o
+ .debug_info    0x00000000      0x576 SPI-dev.o
 
-.debug_abbrev   0x00000000      0x215
+.debug_abbrev   0x00000000      0x1f7
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x215 SPI-dev.o
+ .debug_abbrev  0x00000000      0x1f7 SPI-dev.o
 
-.debug_line     0x00000000      0x458
+.debug_line     0x00000000      0x44c
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x458 SPI-dev.o
+ .debug_line    0x00000000      0x44c SPI-dev.o
 
 .debug_frame    0x00000000      0x130
  *(.debug_frame)
  .debug_frame   0x00000000      0x130 SPI-dev.o
 
-.debug_str      0x00000000      0x2f5
+.debug_str      0x00000000      0x323
  *(.debug_str)
- .debug_str     0x00000000      0x2f5 SPI-dev.o
-                                0x350 (size before relaxing)
+ .debug_str     0x00000000      0x323 SPI-dev.o
+                                0x384 (size before relaxing)
 
-.debug_loc      0x00000000      0x40c
+.debug_loc      0x00000000      0x406
  *(.debug_loc)
- .debug_loc     0x00000000      0x40c SPI-dev.o
+ .debug_loc     0x00000000      0x406 SPI-dev.o
 
 .debug_macinfo
  *(.debug_macinfo)

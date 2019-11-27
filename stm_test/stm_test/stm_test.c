@@ -5,47 +5,52 @@
  */ 
 
 
-#define F_CPU 16000000UL
+#define F_CPU 1000000UL
 #include <avr/io.h>	
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
 
+unsigned int NEUTRAL; 
+unsigned int NEUTRAL_direction;
+unsigned int acceleration_rate_speed ;
+unsigned int acceleration_rate_direction;
+
 void speed_controller(signed char  speed) {
 	// speeds choses between 0-127 or reversed speeds between 0-(-127),
-	// OCR1A = 18600(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
+	// OCR1A = 18509(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
 	// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
 	// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
 	
-	unsigned int counter_limit_const = 18600;
-	unsigned int acceleration_rate = 4;
-	OCR1A = counter_limit_const - (speed * acceleration_rate );
+	OCR1A = NEUTRAL - (speed * acceleration_rate_speed);
 	
 }
 
 
 
 void direction_controller(signed char direction ) {
-	// Right directions between 0-127 and left directions between 0-(-127), OCR1B = 18600(the compare value with the counter ICR1) give neutral direction.
+	// Right directions between 0-127 and left directions between 0-(-127),
+	// OCR1B = 18509(the compare value with the counter ICR1 : counter_limit_const counter_limit_const) give neutral direction.
 	// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
 	// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
-	unsigned int counter_limit_const = 18600;
-	unsigned int acceleration_rate = 3;
-	OCR1B = counter_limit_const - (direction * acceleration_rate);
+
+	OCR1B = NEUTRAL_direction - (direction * acceleration_rate_direction);
 	
 }
 
 int main(void)
 {	
 	DDRD |= 0xFF;
-	TCCR1A |=   (1<<WGM11) | (1<<WGM12) | (1<<WGM13) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
-	TCCR1B |=  (0<<WGM10) | (1<<WGM11) | (1<<WGM12) | (1<<WGM13);
-	ICR1 = 19999 ; // 20 ms period needed for the motor and controlling servo.
-
+	TCCR1A |=   (1<<WGM11) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
+	TCCR1B |=   (1<<WGM12) | (1<<WGM13) | (1<<CS10);
+	ICR1 = F_CPU/50; //19999 ; // 50 hz needed for the motor and controlling servo.
+	
+	
+	 NEUTRAL = ICR1-1490 ; // pulse width 1.5ms
+	 acceleration_rate_speed = 10;
+	 acceleration_rate_direction = 4;
+	 NEUTRAL_direction = ICR1-1430; // pulse width 1,43
 		
-	unsigned int NEUTRAL = ICR1 -1447; // 1.47ms
-	unsigned int LEFT = ICR1 - 1210;
-	unsigned int RIGHT= ICR1 -1650;
 	
     // positive value for speed.
 	
@@ -87,47 +92,16 @@ int main(void)
 	signed char aa = -1; 
 	//signed char z = 0 ; // no movement.
 	
-	EICRA |= 1<<ISC20 | 1<<ISC21;
-	EIMSK |= 1<<INT2;
-	EIFR |= 1<<INTF2;
-	sei();               // Enable global interrupts.
 	
 	//OCR1B = NEUTRAL; // 
-	OCR1B = NEUTRAL; // 
+	OCR1B = NEUTRAL_direction; // 
 	OCR1A = NEUTRAL;  // 
 	
     while(1)
     {
-	speed_controller(z);
-		_delay_ms (1000);
-		speed_controller(a);
-		_delay_ms (1000);	
-		speed_controller(b);
-		_delay_ms (1000);	
-		speed_controller(c);
-		_delay_ms (1000);	
-		speed_controller(d);
-		_delay_ms (1000);	
-		speed_controller(e);
-		_delay_ms (1000);	
-		speed_controller(f);
-		_delay_ms (1000);	
-		speed_controller(g);
-		_delay_ms (1000);	
-		speed_controller(h);
-		_delay_ms (1000);	
-		speed_controller(j);
-		_delay_ms (1000);	
-		speed_controller(k);
-		_delay_ms (1000);	
-		speed_controller(l);
-		_delay_ms (1000);	
-		speed_controller(m);
-		_delay_ms (1000);	
-		speed_controller(n);
-		_delay_ms (1000);	
-		speed_controller(o);
-		_delay_ms (1000);	
+
+
+	
 		
 		
 		
@@ -162,12 +136,7 @@ int main(void)
 		speed_controller(oo);
 		_delay_ms (1000);
 		
+		
     }
 	return 0;
-}
-
-
-ISR(INT2_vect)
-{
-	OCR1A -=10;
 }
