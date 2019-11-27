@@ -3,29 +3,29 @@ SPI-dev.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000002  00800100  0000025e  000002f2  2**0
+  0 .data         00000002  00800100  000002b6  0000034a  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000025e  00000000  00000000  00000094  2**1
+  1 .text         000002b6  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000000d  00800102  00800102  000002f4  2**0
+  2 .bss          0000000d  00800102  00800102  0000034c  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000002f4  2**0
+  3 .comment      00000030  00000000  00000000  0000034c  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 00000090  00000000  00000000  00000324  2**0
+  4 .debug_aranges 000000a0  00000000  00000000  0000037c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000054d  00000000  00000000  000003b4  2**0
+  5 .debug_info   00000585  00000000  00000000  0000041c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000215  00000000  00000000  00000901  2**0
+  6 .debug_abbrev 00000215  00000000  00000000  000009a1  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000043a  00000000  00000000  00000b16  2**0
+  7 .debug_line   000004a4  00000000  00000000  00000bb6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000130  00000000  00000000  00000f50  2**2
+  8 .debug_frame  00000164  00000000  00000000  0000105c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000002f4  00000000  00000000  00001080  2**0
+  9 .debug_str    00000310  00000000  00000000  000011c0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000003e1  00000000  00000000  00001374  2**0
+ 10 .debug_loc    0000042a  00000000  00000000  000014d0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000080  00000000  00000000  00001755  2**0
+ 11 .debug_ranges 00000090  00000000  00000000  000018fa  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -37,7 +37,7 @@ Disassembly of section .text:
    6:	00 00       	nop
    8:	5e c0       	rjmp	.+188    	; 0xc6 <__bad_interrupt>
    a:	00 00       	nop
-   c:	e0 c0       	rjmp	.+448    	; 0x1ce <__vector_3>
+   c:	06 c1       	rjmp	.+524    	; 0x21a <__vector_3>
    e:	00 00       	nop
   10:	5a c0       	rjmp	.+180    	; 0xc6 <__bad_interrupt>
   12:	00 00       	nop
@@ -99,7 +99,7 @@ Disassembly of section .text:
   82:	00 00       	nop
   84:	20 c0       	rjmp	.+64     	; 0xc6 <__bad_interrupt>
   86:	00 00       	nop
-  88:	1e c0       	rjmp	.+60     	; 0xc6 <__bad_interrupt>
+  88:	b0 c0       	rjmp	.+352    	; 0x1ea <__vector_34>
 	...
 
 0000008c <__ctors_end>:
@@ -114,7 +114,7 @@ Disassembly of section .text:
   98:	11 e0       	ldi	r17, 0x01	; 1
   9a:	a0 e0       	ldi	r26, 0x00	; 0
   9c:	b1 e0       	ldi	r27, 0x01	; 1
-  9e:	ee e5       	ldi	r30, 0x5E	; 94
+  9e:	e6 eb       	ldi	r30, 0xB6	; 182
   a0:	f2 e0       	ldi	r31, 0x02	; 2
   a2:	00 e0       	ldi	r16, 0x00	; 0
   a4:	0b bf       	out	0x3b, r16	; 59
@@ -138,8 +138,8 @@ Disassembly of section .text:
   bc:	af 30       	cpi	r26, 0x0F	; 15
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
-  c2:	9b d0       	rcall	.+310    	; 0x1fa <main>
-  c4:	ca c0       	rjmp	.+404    	; 0x25a <_exit>
+  c2:	c1 d0       	rcall	.+386    	; 0x246 <main>
+  c4:	f6 c0       	rjmp	.+492    	; 0x2b2 <_exit>
 
 000000c6 <__bad_interrupt>:
   c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
@@ -237,181 +237,244 @@ Disassembly of section .text:
  180:	80 93 09 01 	sts	0x0109, r24
  184:	08 95       	ret
 
-00000186 <speed_controller>:
+00000186 <initiate_abort_counter>:
+ 186:	e4 e6       	ldi	r30, 0x64	; 100
+ 188:	f0 e0       	ldi	r31, 0x00	; 0
+ 18a:	80 81       	ld	r24, Z
+ 18c:	8e 7f       	andi	r24, 0xFE	; 254
+ 18e:	80 83       	st	Z, r24
+ 190:	10 92 90 00 	sts	0x0090, r1
+ 194:	82 e0       	ldi	r24, 0x02	; 2
+ 196:	80 93 91 00 	sts	0x0091, r24
+ 19a:	81 e0       	ldi	r24, 0x01	; 1
+ 19c:	80 93 71 00 	sts	0x0071, r24
+ 1a0:	08 95       	ret
+
+000001a2 <speed_controller>:
 		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
 		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
 		
 		unsigned int counter_limit_const = 18600; 
 		unsigned int acceleration_rate = 3;
 		OCR1A = counter_limit_const - (speed * acceleration_rate );
- 186:	99 27       	eor	r25, r25
- 188:	87 fd       	sbrc	r24, 7
- 18a:	90 95       	com	r25
- 18c:	9c 01       	movw	r18, r24
- 18e:	22 0f       	add	r18, r18
- 190:	33 1f       	adc	r19, r19
- 192:	82 0f       	add	r24, r18
- 194:	93 1f       	adc	r25, r19
- 196:	28 ea       	ldi	r18, 0xA8	; 168
- 198:	38 e4       	ldi	r19, 0x48	; 72
- 19a:	a9 01       	movw	r20, r18
- 19c:	48 1b       	sub	r20, r24
- 19e:	59 0b       	sbc	r21, r25
- 1a0:	50 93 89 00 	sts	0x0089, r21
- 1a4:	40 93 88 00 	sts	0x0088, r20
- 1a8:	08 95       	ret
+ 1a2:	99 27       	eor	r25, r25
+ 1a4:	87 fd       	sbrc	r24, 7
+ 1a6:	90 95       	com	r25
+ 1a8:	9c 01       	movw	r18, r24
+ 1aa:	22 0f       	add	r18, r18
+ 1ac:	33 1f       	adc	r19, r19
+ 1ae:	82 0f       	add	r24, r18
+ 1b0:	93 1f       	adc	r25, r19
+ 1b2:	28 ea       	ldi	r18, 0xA8	; 168
+ 1b4:	38 e4       	ldi	r19, 0x48	; 72
+ 1b6:	a9 01       	movw	r20, r18
+ 1b8:	48 1b       	sub	r20, r24
+ 1ba:	59 0b       	sbc	r21, r25
+ 1bc:	50 93 89 00 	sts	0x0089, r21
+ 1c0:	40 93 88 00 	sts	0x0088, r20
+ 1c4:	08 95       	ret
 
-000001aa <direction_controller>:
+000001c6 <direction_controller>:
 		// Right directions between 0-127 and left directions between 0-(-127), OCR1B = 18600(the compare value with the counter ICR1) give neutral direction.
 		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
 		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
 		unsigned int counter_limit_const = 18600;
 		unsigned int acceleration_rate = 3;
 		OCR1B = counter_limit_const - (direction * acceleration_rate);
- 1aa:	99 27       	eor	r25, r25
- 1ac:	87 fd       	sbrc	r24, 7
- 1ae:	90 95       	com	r25
- 1b0:	9c 01       	movw	r18, r24
- 1b2:	22 0f       	add	r18, r18
- 1b4:	33 1f       	adc	r19, r19
- 1b6:	82 0f       	add	r24, r18
- 1b8:	93 1f       	adc	r25, r19
- 1ba:	28 ea       	ldi	r18, 0xA8	; 168
- 1bc:	38 e4       	ldi	r19, 0x48	; 72
- 1be:	a9 01       	movw	r20, r18
- 1c0:	48 1b       	sub	r20, r24
- 1c2:	59 0b       	sbc	r21, r25
- 1c4:	50 93 8b 00 	sts	0x008B, r21
- 1c8:	40 93 8a 00 	sts	0x008A, r20
- 1cc:	08 95       	ret
+ 1c6:	99 27       	eor	r25, r25
+ 1c8:	87 fd       	sbrc	r24, 7
+ 1ca:	90 95       	com	r25
+ 1cc:	9c 01       	movw	r18, r24
+ 1ce:	22 0f       	add	r18, r18
+ 1d0:	33 1f       	adc	r19, r19
+ 1d2:	82 0f       	add	r24, r18
+ 1d4:	93 1f       	adc	r25, r19
+ 1d6:	28 ea       	ldi	r18, 0xA8	; 168
+ 1d8:	38 e4       	ldi	r19, 0x48	; 72
+ 1da:	a9 01       	movw	r20, r18
+ 1dc:	48 1b       	sub	r20, r24
+ 1de:	59 0b       	sbc	r21, r25
+ 1e0:	50 93 8b 00 	sts	0x008B, r21
+ 1e4:	40 93 8a 00 	sts	0x008A, r20
+ 1e8:	08 95       	ret
 
-000001ce <__vector_3>:
+000001ea <__vector_34>:
+		
 	}
 
+// Lost connection with central module, see comment on initiate_abort_counter
+ISR(TIMER3_OVF_vect)
+{
+ 1ea:	1f 92       	push	r1
+ 1ec:	0f 92       	push	r0
+ 1ee:	0f b6       	in	r0, 0x3f	; 63
+ 1f0:	0f 92       	push	r0
+ 1f2:	11 24       	eor	r1, r1
+ 1f4:	8f 93       	push	r24
+ 1f6:	9f 93       	push	r25
+	OCR1A = NEUTRAL;
+ 1f8:	80 91 0d 01 	lds	r24, 0x010D
+ 1fc:	90 91 0e 01 	lds	r25, 0x010E
+ 200:	90 93 89 00 	sts	0x0089, r25
+ 204:	80 93 88 00 	sts	0x0088, r24
+	PORTA = 0xF1;
+ 208:	81 ef       	ldi	r24, 0xF1	; 241
+ 20a:	82 b9       	out	0x02, r24	; 2
+}
+ 20c:	9f 91       	pop	r25
+ 20e:	8f 91       	pop	r24
+ 210:	0f 90       	pop	r0
+ 212:	0f be       	out	0x3f, r0	; 63
+ 214:	0f 90       	pop	r0
+ 216:	1f 90       	pop	r1
+ 218:	18 95       	reti
 
+0000021a <__vector_3>:
 
 ISR(INT2_vect)
 {
- 1ce:	1f 92       	push	r1
- 1d0:	0f 92       	push	r0
- 1d2:	0f b6       	in	r0, 0x3f	; 63
- 1d4:	0f 92       	push	r0
- 1d6:	11 24       	eor	r1, r1
+ 21a:	1f 92       	push	r1
+ 21c:	0f 92       	push	r0
+ 21e:	0f b6       	in	r0, 0x3f	; 63
+ 220:	0f 92       	push	r0
+ 222:	11 24       	eor	r1, r1
 	
 	//Stop button.
 	OCR1A = NEUTRAL;
- 1d8:	80 91 0d 01 	lds	r24, 0x010D
- 1dc:	90 91 0e 01 	lds	r25, 0x010E
- 1e0:	90 93 89 00 	sts	0x0089, r25
- 1e4:	80 93 88 00 	sts	0x0088, r24
+ 224:	80 91 0d 01 	lds	r24, 0x010D
+ 228:	90 91 0e 01 	lds	r25, 0x010E
+ 22c:	90 93 89 00 	sts	0x0089, r25
+ 230:	80 93 88 00 	sts	0x0088, r24
 	OCR1B = NEUTRAL;
- 1e8:	80 91 0d 01 	lds	r24, 0x010D
- 1ec:	90 91 0e 01 	lds	r25, 0x010E
- 1f0:	90 93 8b 00 	sts	0x008B, r25
- 1f4:	80 93 8a 00 	sts	0x008A, r24
- 1f8:	ff cf       	rjmp	.-2      	; 0x1f8 <__vector_3+0x2a>
+ 234:	80 91 0d 01 	lds	r24, 0x010D
+ 238:	90 91 0e 01 	lds	r25, 0x010E
+ 23c:	90 93 8b 00 	sts	0x008B, r25
+ 240:	80 93 8a 00 	sts	0x008A, r24
+ 244:	ff cf       	rjmp	.-2      	; 0x244 <__vector_3+0x2a>
 
-000001fa <main>:
+00000246 <main>:
 }
 
 int main(void) {
 
 	// Stop button configurations.
 	EICRA |= 1<<ISC20 | 1<<ISC21;
- 1fa:	e9 e6       	ldi	r30, 0x69	; 105
- 1fc:	f0 e0       	ldi	r31, 0x00	; 0
- 1fe:	80 81       	ld	r24, Z
- 200:	80 63       	ori	r24, 0x30	; 48
- 202:	80 83       	st	Z, r24
+ 246:	e9 e6       	ldi	r30, 0x69	; 105
+ 248:	f0 e0       	ldi	r31, 0x00	; 0
+ 24a:	80 81       	ld	r24, Z
+ 24c:	80 63       	ori	r24, 0x30	; 48
+ 24e:	80 83       	st	Z, r24
 	EIMSK |= 1<<INT2;
- 204:	ea 9a       	sbi	0x1d, 2	; 29
+ 250:	ea 9a       	sbi	0x1d, 2	; 29
 	EIFR |= 1<<INTF2;
- 206:	e2 9a       	sbi	0x1c, 2	; 28
+ 252:	e2 9a       	sbi	0x1c, 2	; 28
 	sei();               // Enable global interrupts.
- 208:	78 94       	sei
+ 254:	78 94       	sei
 	SPI_SlaveInit();
- 20a:	5e df       	rcall	.-324    	; 0xc8 <SPI_SlaveInit>
+ 256:	38 df       	rcall	.-400    	; 0xc8 <SPI_SlaveInit>
 	PWM_init();
- 20c:	78 df       	rcall	.-272    	; 0xfe <PWM_init>
+ 258:	52 df       	rcall	.-348    	; 0xfe <PWM_init>
 
 	return check;
 }
 
 void init(void) {
 	DDRA = 0xFF;
- 20e:	8f ef       	ldi	r24, 0xFF	; 255
- 210:	81 b9       	out	0x01, r24	; 1
+ 25a:	8f ef       	ldi	r24, 0xFF	; 255
+ 25c:	81 b9       	out	0x01, r24	; 1
+	EIFR |= 1<<INTF2;
 	sei();               // Enable global interrupts.
 	SPI_SlaveInit();
 	PWM_init();
 	init();
+	initiate_abort_counter();
+ 25e:	93 df       	rcall	.-218    	; 0x186 <initiate_abort_counter>
 
 	PORTA = 0xBB; 	
- 212:	8b eb       	ldi	r24, 0xBB	; 187
- 214:	82 b9       	out	0x02, r24	; 2
+ 260:	8b eb       	ldi	r24, 0xBB	; 187
+ 262:	82 b9       	out	0x02, r24	; 2
 	uint8_t spi_success = 0;
 	
 	uint8_t spi_read = 0;	
 
 	
 	OCR1A = NEUTRAL;
- 216:	80 91 0d 01 	lds	r24, 0x010D
- 21a:	90 91 0e 01 	lds	r25, 0x010E
- 21e:	90 93 89 00 	sts	0x0089, r25
- 222:	80 93 88 00 	sts	0x0088, r24
+ 264:	80 91 0d 01 	lds	r24, 0x010D
+ 268:	90 91 0e 01 	lds	r25, 0x010E
+ 26c:	90 93 89 00 	sts	0x0089, r25
+ 270:	80 93 88 00 	sts	0x0088, r24
 	OCR1B = NEUTRAL;
- 226:	80 91 0d 01 	lds	r24, 0x010D
- 22a:	90 91 0e 01 	lds	r25, 0x010E
- 22e:	90 93 8b 00 	sts	0x008B, r25
- 232:	80 93 8a 00 	sts	0x008A, r24
+ 274:	80 91 0d 01 	lds	r24, 0x010D
+ 278:	90 91 0e 01 	lds	r25, 0x010E
+ 27c:	90 93 8b 00 	sts	0x008B, r25
+ 280:	80 93 8a 00 	sts	0x008A, r24
 	
 	while(1) {
 		PORTA = 0xFF;
- 236:	cf ef       	ldi	r28, 0xFF	; 255
- 238:	c2 b9       	out	0x02, r28	; 2
+ 284:	1f ef       	ldi	r17, 0xFF	; 255
+		/* Check if communication was a success */
+		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
+		
+		if (spi_success) {
+			//impl_speed_direction();
+			TCNT3 = 0;
+ 286:	c4 e9       	ldi	r28, 0x94	; 148
+ 288:	d0 e0       	ldi	r29, 0x00	; 0
+	
+	OCR1A = NEUTRAL;
+	OCR1B = NEUTRAL;
+	
+	while(1) {
+		PORTA = 0xFF;
+ 28a:	12 b9       	out	0x02, r17	; 2
 		
 		spi_rdy = 0;
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
- 23a:	8e ee       	ldi	r24, 0xEE	; 238
- 23c:	49 df       	rcall	.-366    	; 0xd0 <SPI_tranceive>
+ 28c:	8e ee       	ldi	r24, 0xEE	; 238
+ 28e:	20 df       	rcall	.-448    	; 0xd0 <SPI_tranceive>
 		PORTA = 0xFF;
 		
 		spi_rdy = 0;
 		
 		/* SPI wait for start byte from central module */
 		while (spi_rdy == 0) {
- 23e:	8a 3a       	cpi	r24, 0xAA	; 170
- 240:	e1 f7       	brne	.-8      	; 0x23a <main+0x40>
+ 290:	8a 3a       	cpi	r24, 0xAA	; 170
+ 292:	e1 f7       	brne	.-8      	; 0x28c <main+0x46>
 			spi_read = SPI_tranceive(SPI_ACK);
 			spi_rdy = (spi_read == SPI_START);
 			
 		}
 
 		read_data_send_check();
- 242:	4c df       	rcall	.-360    	; 0xdc <read_data_send_check>
+ 294:	23 df       	rcall	.-442    	; 0xdc <read_data_send_check>
 		
 		/* Check if communication was a success */
 		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
- 244:	80 e0       	ldi	r24, 0x00	; 0
- 246:	44 df       	rcall	.-376    	; 0xd0 <SPI_tranceive>
+ 296:	80 e0       	ldi	r24, 0x00	; 0
+ 298:	1b df       	rcall	.-458    	; 0xd0 <SPI_tranceive>
 		
 		if (spi_success) {
- 248:	86 36       	cpi	r24, 0x66	; 102
- 24a:	b1 f7       	brne	.-20     	; 0x238 <main+0x3e>
+ 29a:	86 36       	cpi	r24, 0x66	; 102
+ 29c:	b1 f7       	brne	.-20     	; 0x28a <main+0x44>
 			//impl_speed_direction();
+			TCNT3 = 0;
+ 29e:	19 82       	std	Y+1, r1	; 0x01
+ 2a0:	18 82       	st	Y, r1
+			PORTA = 0x00;
+ 2a2:	12 b8       	out	0x02, r1	; 2
 			speed_controller(speed_cm);
- 24c:	80 91 02 01 	lds	r24, 0x0102
- 250:	9a df       	rcall	.-204    	; 0x186 <speed_controller>
+ 2a4:	80 91 02 01 	lds	r24, 0x0102
+ 2a8:	7c df       	rcall	.-264    	; 0x1a2 <speed_controller>
 			direction_controller(angle_cm);
- 252:	80 91 01 01 	lds	r24, 0x0101
- 256:	a9 df       	rcall	.-174    	; 0x1aa <direction_controller>
- 258:	ef cf       	rjmp	.-34     	; 0x238 <main+0x3e>
+ 2aa:	80 91 01 01 	lds	r24, 0x0101
+ 2ae:	8b df       	rcall	.-234    	; 0x1c6 <direction_controller>
+ 2b0:	ec cf       	rjmp	.-40     	; 0x28a <main+0x44>
 
-0000025a <_exit>:
- 25a:	f8 94       	cli
+000002b2 <_exit>:
+ 2b2:	f8 94       	cli
 
-0000025c <__stop_program>:
- 25c:	ff cf       	rjmp	.-2      	; 0x25c <__stop_program>
+000002b4 <__stop_program>:
+ 2b4:	ff cf       	rjmp	.-2      	; 0x2b4 <__stop_program>
