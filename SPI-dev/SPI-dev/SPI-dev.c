@@ -7,6 +7,7 @@
 
 
 #include <avr/io.h>
+#include <stdlib.h>
 
 #define F_CPU 1000000UL  // 1 MHz
 #include <util/delay.h>
@@ -44,47 +45,13 @@ int8_t angle_cm = 0x11;
 
 uint8_t check_byte = 0x22;
 
-unsigned int NEUTRAL; 
-unsigned int NEUTRAL_direction; 
-unsigned int LEFT ;
-unsigned int RIGHT;
-
-unsigned int SPEED_LOW;
-unsigned int SPEED_MIDDLE;
-unsigned int SPEED_BACK; //1.38 ms
+unsigned int NEUTRAL_SPEED; 
+unsigned int NEUTRAL_DIRECTION; 
 
 unsigned int counter_limit_const ;
-unsigned int acceleration_rate_speed ;
+float acceleration_rate_speed ;
 unsigned int acceleration_rate_direction;
 
-/* Prototypes */
-uint8_t calc_check_byte(uint8_t *buffer, uint8_t size);
-
-/* 
- * The steering module SPI interrupt routine.
- */
-/*
-ISR(SPI_STC_vect) {
-	uint8_t spi_buffer[6];
-	
-	SPI_SlaveReceiveBytes(spi_buffer, PROTOCOL_READ_BYTES);
-	
-	check_byte = calc_check_byte(spi_buffer, PROTOCOL_READ_BYTES);
-	
-	speed_cm = (int8_t) spi_buffer[1];
-	angle_cm = (int8_t) spi_buffer[2];
-	
-}
-*/
-
-uint8_t calc_check_byte(uint8_t *buffer, uint8_t size) {
-	uint8_t check = buffer[0];
-	for (uint8_t i = 1; i < size; i++) {
-		check ^= buffer[i];
-	}
-
-	return check;
-}
 
 void init(void) {
 	DDRA = 0xFF;
@@ -123,29 +90,6 @@ void SPI_SlaveReceiveBytes(uint8_t *buffer, uint8_t size) {
 }
 
 
-void count_port_a(void) {
-	while (1) {
-		for (uint8_t a = 0; a < 0xFF; ++a) {
-			PORTA = a;
-			
-			for (uint8_t t = 1; t != 0; ++t){
-				for (uint8_t i = 1; i != 0; ++i){}
-			}
-			
-		}
-
-	}
-}
-
-
-void print_buffer_port_a(uint8_t *buffer, uint8_t size) {
-	for (uint8_t i = 0; i < size; i++) {
-		PORTA = buffer[i];
-		_delay_ms(1000);
-	}
-}
-
-
 /*
  * Perform communication with the central module in accordance to the protocol. 
  * Returns 1 if the communication was successful or 0 if it failed.
@@ -173,37 +117,10 @@ void PWM_init() {
 	ICR1 = F_CPU/50; //19999 ; // 50 hz needed for the motor and controlling servo.
 
 	
-	NEUTRAL = ICR1-1490 ; // pulse width 1.5ms
-	acceleration_rate_speed = 4;
+	NEUTRAL_SPEED = ICR1-1490 ; // pulse width 1.5ms
+	acceleration_rate_speed = 1;
 	acceleration_rate_direction = 4;
-	NEUTRAL_direction = ICR1-1430; // pulse width 1,43 
-
-}
-
-
-void impl_speed_direction(void) {
-	
-	if (speed_cm == SPI_SPEED_NEUTRAL) {
-		OCR1A = NEUTRAL;
-	} else if (speed_cm == SPI_SPEED_LOW) {
-		OCR1A = SPEED_LOW;
-	} else if (speed_cm == SPI_SPEED_MIDDLE) {
-		OCR1A = SPEED_MIDDLE;
-	}else if (speed_cm == SPI_BACK) {
-		OCR1A = SPEED_BACK;
-	}else {
-		PORTA = 0xAE;
-	}
-	
-	if (angle_cm == SPI_ANGLE_NEUTRAL) {
-		OCR1B = NEUTRAL;
-	} else if (angle_cm ==  SPI_ANGLE_LEFT) {
-		OCR1B = LEFT;
-	} else if (angle_cm ==  SPI_ANGLE_RIGHT) {
-		OCR1B = RIGHT;
-	} else {
-		PORTA = 0xEA;
-	}
+	NEUTRAL_DIRECTION = ICR1-1430; // pulse width 1,43 
 
 }
 
@@ -214,7 +131,13 @@ void speed_controller(signed char  speed) {
 		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
 		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
 		
-		OCR1A = NEUTRAL - (speed * acceleration_rate_speed);
+		if (speed > 60) {
+			speed = 60;
+		} else if (speed < -60) {
+			speed = -60;
+		}
+		
+		OCR1A = NEUTRAL_SPEED - (unsigned int)(speed * acceleration_rate_speed);
 		
 	}
 	
@@ -226,7 +149,7 @@ void direction_controller(signed char direction ) {
 		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
 		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
 
-		OCR1B = NEUTRAL_direction - (direction * acceleration_rate_direction);
+		OCR1B = NEUTRAL_DIRECTION - (direction * acceleration_rate_direction);
 		
 	}
 
@@ -236,8 +159,8 @@ ISR(INT2_vect)
 {
 	
 	//Stop button.
-	OCR1A = NEUTRAL;
-	OCR1B = NEUTRAL_direction;
+	speed_controller(0);
+	direction_controller(0);
 	while(1){
 		
 	}
@@ -260,37 +183,34 @@ int main(void) {
 	uint8_t spi_success = 0;
 	
 	uint8_t spi_read = 0;
-	uint8_t cntr = 0;
 	
-
-	
-	OCR1A = NEUTRAL;
-	OCR1B = ICR1 -1400;
+	speed_controller(0);
+	direction_controller(0);
 	
 	while(1) {
 		
+		
 		spi_rdy = 0;
 		
-		/* SPI wait for start byte from central module */
+		// SPI wait for start byte from central module
 		while (spi_rdy == 0) {
 			spi_read = SPI_tranceive(SPI_ACK);
 			spi_rdy = (spi_read == SPI_START);
 			
-			cntr++;
 		}
-		cntr = 0;
 		
 		read_data_send_check();
 		
-		/* Check if communication was a success */
+		// Check if communication was a success
 		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
 		
 		if (spi_success) {
-			//impl_speed_direction();
+
 			speed_controller(speed_cm);
 			direction_controller(angle_cm);
 			
 		}
+		
 	}
 }
 
