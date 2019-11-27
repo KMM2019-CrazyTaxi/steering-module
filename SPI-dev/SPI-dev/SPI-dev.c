@@ -119,7 +119,7 @@ void PWM_init() {
 	
 	NEUTRAL_SPEED = ICR1-1490 ; // pulse width 1.5ms
 	acceleration_rate_speed = 1;
-	acceleration_rate_direction = 4;
+	acceleration_rate_direction = 2;
 	NEUTRAL_DIRECTION = ICR1-1430; // pulse width 1,43 
 
 }
@@ -130,11 +130,23 @@ void speed_controller(signed char  speed) {
 		// OCR1A = 18509(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
 		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
 		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
-		
-		if (speed > 60) {
-			speed = 60;
-		} else if (speed < -60) {
-			speed = -60;
+		if (speed > 30) {
+			speed = 30;
+		} else if (speed < -30) {
+			speed = -30;
+		}
+		if (speed > 0) {
+			if (speed < 108) {
+				speed += 20;
+				} else {
+				speed = 127;
+			}
+		} else if (speed < 0) {
+			if (speed > -109) {
+				speed -= 20;
+			} else {
+				speed = -128;
+			}
 		}
 		
 		OCR1A = NEUTRAL_SPEED - (unsigned int)(speed * acceleration_rate_speed);
