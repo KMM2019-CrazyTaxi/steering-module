@@ -553,10 +553,10 @@ END GROUP
  *(.debug_frame)
  .debug_frame   0x00000000       0xf0 SPI-dev.o
 
-.debug_str      0x00000000      0x274
+.debug_str      0x00000000      0x27c
  *(.debug_str)
- .debug_str     0x00000000      0x274 SPI-dev.o
-                                0x2c4 (size before relaxing)
+ .debug_str     0x00000000      0x27c SPI-dev.o
+                                0x2cc (size before relaxing)
 
 .debug_loc      0x00000000      0x1e9
  *(.debug_loc)

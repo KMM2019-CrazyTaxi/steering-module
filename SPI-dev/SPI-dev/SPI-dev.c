@@ -119,7 +119,7 @@ void PWM_init() {
 	
 	NEUTRAL_SPEED = ICR1-1490 ; // pulse width 1.5ms
 	acceleration_rate_speed = 1;
-	acceleration_rate_direction = 2;
+	acceleration_rate_direction = 4;
 	NEUTRAL_DIRECTION = ICR1-1430; // pulse width 1,43 
 
 }

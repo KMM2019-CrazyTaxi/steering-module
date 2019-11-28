@@ -21,11 +21,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  000000f0  00000000  00000000  00000df0  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000274  00000000  00000000  00000ee0  2**0
+  9 .debug_str    0000027c  00000000  00000000  00000ee0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000001e9  00000000  00000000  00001154  2**0
+ 10 .debug_loc    000001e9  00000000  00000000  0000115c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000060  00000000  00000000  0000133d  2**0
+ 11 .debug_ranges 00000060  00000000  00000000  00001345  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -240,8 +240,8 @@ void PWM_init() {
  140:	90 93 0a 01 	sts	0x010A, r25
  144:	a0 93 0b 01 	sts	0x010B, r26
  148:	b0 93 0c 01 	sts	0x010C, r27
-	acceleration_rate_direction = 2;
- 14c:	82 e0       	ldi	r24, 0x02	; 2
+	acceleration_rate_direction = 4;
+ 14c:	84 e0       	ldi	r24, 0x04	; 4
  14e:	90 e0       	ldi	r25, 0x00	; 0
  150:	90 93 08 01 	sts	0x0108, r25
  154:	80 93 07 01 	sts	0x0107, r24
