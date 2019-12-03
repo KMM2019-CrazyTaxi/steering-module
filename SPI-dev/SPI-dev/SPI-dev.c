@@ -159,6 +159,20 @@ void PWM_init() {
 	
 }
 
+/*
+ * This function initiates timer3, which is used to track how long time has passed since
+ * the last exchange with the central module. If too long time has passed, the overflow
+ * interrupt from this timer will shut down the engine, preventing crashes if the connection
+ * is lost.
+ */
+void initiate_abort_counter(void)
+{
+	PRR0 = PRR0 & ~(1 << PRTIM3);	// Enable COUNT3 circuit.
+	TCCR3A = 0;	// Normal mode.
+	TCCR3B = (0 << CS32) | (1 << CS31) | (0 << CS10);	// Prescaler 8 on 1 MHz system clock.
+	TIMSK3 = (1 << TOIE3);	// Enable overflow interrupt
+}
+
 
 void impl_speed_direction(void) {
 	
@@ -211,7 +225,12 @@ void direction_controller(signed char direction ) {
 		
 	}
 
-
+// Lost connection with central module, see comment on initiate_abort_counter
+ISR(TIMER3_OVF_vect)
+{
+	OCR1A = NEUTRAL;
+	PORTA = 0xF1;
+}
 
 ISR(INT2_vect)
 {
@@ -234,6 +253,7 @@ int main(void) {
 	SPI_SlaveInit();
 	PWM_init();
 	init();
+	initiate_abort_counter();
 
 	PORTA = 0xBB; 	
 	
@@ -265,6 +285,8 @@ int main(void) {
 		
 		if (spi_success) {
 			//impl_speed_direction();
+			TCNT3 = 0;
+			PORTA = 0x00;
 			speed_controller(speed_cm);
 			direction_controller(angle_cm);
 			
