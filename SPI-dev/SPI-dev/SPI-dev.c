@@ -52,7 +52,6 @@ unsigned int counter_limit_const ;
 float acceleration_rate_speed ;
 unsigned int acceleration_rate_direction;
 
-
 void init(void) {
 	DDRA = 0xFF;
 }
@@ -116,20 +115,33 @@ void PWM_init() {
 	TCCR1B |=   (1<<WGM12) | (1<<WGM13) | (1<<CS10);
 	ICR1 = F_CPU/50; //19999 ; // 50 hz needed for the motor and controlling servo.
 
-	
 	NEUTRAL_SPEED = ICR1-1490 ; // pulse width 1.5ms
 	acceleration_rate_speed = 1;
 	acceleration_rate_direction = 4;
 	NEUTRAL_DIRECTION = ICR1-1430; // pulse width 1,43 
+}
 
+/*
+ * This function initiates timer3, which is used to track how long time has passed since
+ * the last exchange with the central module. If too long time has passed, the overflow
+ * interrupt from this timer will shut down the engine, preventing crashes if the connection
+ * is lost.
+ */
+void initiate_abort_counter(void)
+{
+	PRR0 = PRR0 & ~(1 << PRTIM3);	// Enable COUNT3 circuit.
+	TCCR3A = 0;	// Normal mode.
+	TCCR3B = (0 << CS32) | (1 << CS31) | (0 << CS10);	// Prescaler 8 on 1 MHz system clock.
+	TIMSK3 = (1 << TOIE3);	// Enable overflow interrupt
 }
 
 
-void speed_controller(signed char  speed) {
-		// speeds choses between 0-127 or reversed speeds between 0-(-127),
-		// OCR1A = 18509(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
-		// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
-		// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
+// speeds choses between 0-127 or reversed speeds between 0-(-127),
+// OCR1A = 18509(the compare value which is used with the counter ICR1 to create a fast PWM) give neutral speed.
+// The highest speed will be reached when the OCR1A = 18219 (when direction = 127) which gives a PWM signal = (2ms high signal from 20 ms).
+// for example when speed = 0 so OCR1A = 18600 which will give neutral speed.
+void speed_controller(signed char speed) {
+
 		if (speed > 30) {
 			speed = 30;
 		} else if (speed < -30) {
@@ -154,17 +166,24 @@ void speed_controller(signed char  speed) {
 	}
 	
 	
-	
+// Right directions between 0-127 and left directions between 0-(-127),
+// OCR1B = 18509(the compare value with the counter ICR1 : counter_limit_const counter_limit_const) give neutral direction.
+// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
+// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).	
 void direction_controller(signed char direction ) {
-		// Right directions between 0-127 and left directions between 0-(-127),
-		// OCR1B = 18509(the compare value with the counter ICR1 : counter_limit_const counter_limit_const) give neutral direction.
-		// The far right direction will be near to OCR1B = 18219 (when direction = 127) which gives a PWM signal  = (2ms high signal from 20ms),
-		// while the far left will be near to OCR1B = 18981 (when direction = -127) which gives a PWM signal  = (1ms high signal from 20ms).
-
+	
 		OCR1B = NEUTRAL_DIRECTION - (direction * acceleration_rate_direction);
 		
-	}
+}
+	
 
+// Lost connection with central module, see comment on initiate_abort_counter
+ISR(TIMER3_OVF_vect)
+{
+	speed_controller(0);
+	direction_controller(0);
+	PORTA = 0xF1;
+}
 
 
 ISR(INT2_vect)
@@ -184,22 +203,24 @@ int main(void) {
 	EICRA |= 1<<ISC20 | 1<<ISC21;
 	EIMSK |= 1<<INT2;
 	EIFR |= 1<<INTF2;
-	sei();               // Enable global interrupts.
 	SPI_SlaveInit();
 	PWM_init();
 	init();
+	initiate_abort_counter();
+	sei();               // Enable global interrupts.
 
 	PORTA = 0xBB; 	
 	
 	uint8_t spi_rdy = 0;
 	uint8_t spi_success = 0;
-	
+
 	uint8_t spi_read = 0;
 	
 	speed_controller(0);
 	direction_controller(0);
 	
 	while(1) {
+		PORTA = 0xFF;
 		
 		
 		spi_rdy = 0;
@@ -210,14 +231,14 @@ int main(void) {
 			spi_rdy = (spi_read == SPI_START);
 			
 		}
-		
+
 		read_data_send_check();
 		
 		// Check if communication was a success
 		spi_success = SPI_tranceive(SPI_NAN) == SPI_FINISHED;
 		
 		if (spi_success) {
-
+			// Update control values
 			speed_controller(speed_cm);
 			direction_controller(angle_cm);
 			
