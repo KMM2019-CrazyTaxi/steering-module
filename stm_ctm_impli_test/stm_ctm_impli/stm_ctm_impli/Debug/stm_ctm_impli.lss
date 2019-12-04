@@ -3,23 +3,23 @@ stm_ctm_impli.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         000000c2  00000000  00000000  00000054  2**1
+  0 .text         000000aa  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .comment      00000030  00000000  00000000  00000116  2**0
+  1 .comment      00000030  00000000  00000000  000000fe  2**0
                   CONTENTS, READONLY
-  2 .debug_aranges 00000030  00000000  00000000  00000146  2**0
+  2 .debug_aranges 00000020  00000000  00000000  0000012e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_info   000000ec  00000000  00000000  00000176  2**0
+  3 .debug_info   00000087  00000000  00000000  0000014e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_abbrev 000000aa  00000000  00000000  00000262  2**0
+  4 .debug_abbrev 00000053  00000000  00000000  000001d5  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   00000115  00000000  00000000  0000030c  2**0
+  5 .debug_line   000000bf  00000000  00000000  00000228  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_frame  00000044  00000000  00000000  00000424  2**2
+  6 .debug_frame  00000024  00000000  00000000  000002e8  2**2
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_str    00000166  00000000  00000000  00000468  2**0
+  7 .debug_str    00000142  00000000  00000000  0000030c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_ranges 00000020  00000000  00000000  000005ce  2**0
+  8 .debug_ranges 00000010  00000000  00000000  0000044e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -103,65 +103,27 @@ Disassembly of section .text:
   92:	d0 e4       	ldi	r29, 0x40	; 64
   94:	de bf       	out	0x3e, r29	; 62
   96:	cd bf       	out	0x3d, r28	; 61
-  98:	0c d0       	rcall	.+24     	; 0xb2 <main>
-  9a:	11 c0       	rjmp	.+34     	; 0xbe <_exit>
+  98:	02 d0       	rcall	.+4      	; 0x9e <main>
+  9a:	05 c0       	rjmp	.+10     	; 0xa6 <_exit>
 
 0000009c <__bad_interrupt>:
   9c:	b1 cf       	rjmp	.-158    	; 0x0 <__vectors>
 
-0000009e <SPI_SlaveInit>:
-	
-	
-void SPI_SlaveInit(void)
-{
-
-DDRB = 0b00000010;
-  9e:	82 e0       	ldi	r24, 0x02	; 2
-  a0:	84 b9       	out	0x04, r24	; 4
-
-SPCR = (1<<SPE);
-  a2:	80 e4       	ldi	r24, 0x40	; 64
-  a4:	8c bd       	out	0x2c, r24	; 44
-  a6:	08 95       	ret
-
-000000a8 <SPI_SlaveReceive>:
-}
-
-char SPI_SlaveReceive(void)
-{
-
-while(!(SPSR & (1<<SPIF)))
-  a8:	0d b4       	in	r0, 0x2d	; 45
-  aa:	07 fe       	sbrs	r0, 7
-  ac:	fd cf       	rjmp	.-6      	; 0xa8 <SPI_SlaveReceive>
-;return SPDR;
-  ae:	8e b5       	in	r24, 0x2e	; 46
-
-}
-  b0:	08 95       	ret
-
-000000b2 <main>:
-
+0000009e <main>:
+#include <avr/io.h>
 
 
 int main(void)
 {
-	SPI_SlaveInit();
-  b2:	f5 df       	rcall	.-22     	; 0x9e <SPI_SlaveInit>
-	// main loop
-	DDRA = 0b11111111;
-  b4:	8f ef       	ldi	r24, 0xFF	; 255
-  b6:	81 b9       	out	0x01, r24	; 1
-	while(1)
-	{
-		unsigned char temp = SPI_SlaveReceive();
-  b8:	f7 df       	rcall	.-18     	; 0xa8 <SPI_SlaveReceive>
-        PORTA = temp;
-  ba:	82 b9       	out	0x02, r24	; 2
-  bc:	fd cf       	rjmp	.-6      	; 0xb8 <main+0x6>
+	DDRD = 0b11111111;
+  9e:	8f ef       	ldi	r24, 0xFF	; 255
+  a0:	8a b9       	out	0x0a, r24	; 10
+	PORTD =0b11111111;
+  a2:	8b b9       	out	0x0b, r24	; 11
+  a4:	ff cf       	rjmp	.-2      	; 0xa4 <main+0x6>
 
-000000be <_exit>:
-  be:	f8 94       	cli
+000000a6 <_exit>:
+  a6:	f8 94       	cli
 
-000000c0 <__stop_program>:
-  c0:	ff cf       	rjmp	.-2      	; 0xc0 <__stop_program>
+000000a8 <__stop_program>:
+  a8:	ff cf       	rjmp	.-2      	; 0xa8 <__stop_program>
