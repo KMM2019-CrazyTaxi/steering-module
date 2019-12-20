@@ -109,7 +109,7 @@ void read_data_send_check(void) {
 }
 
 
-void PWM_init() {
+void PWM_init(void) {
 	DDRD |= 0xFF;
 	TCCR1A |=   (1<<WGM11) | (1<<COM1B0 |1<<COM1B1) | (1<<COM1A0 |1<<COM1A1);
 	TCCR1B |=   (1<<WGM12) | (1<<WGM13) | (1<<CS10);
